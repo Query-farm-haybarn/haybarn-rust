@@ -1,7 +1,7 @@
 use std::ffi::CString;
 
 use function::{ScalarFunction, ScalarFunctionSet};
-use libduckdb_sys::{
+use libhaybarn_sys::{
     duckdb_data_chunk, duckdb_function_info, duckdb_scalar_function_get_extra_info, duckdb_scalar_function_set_error,
     duckdb_vector,
 };
@@ -216,7 +216,7 @@ mod test {
     use std::error::Error;
 
     use arrow::array::Array;
-    use libduckdb_sys::duckdb_string_t;
+    use libhaybarn_sys::duckdb_string_t;
 
     use crate::{
         Connection,

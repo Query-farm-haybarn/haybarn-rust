@@ -9,7 +9,7 @@
 //!
 //! ```rust,no_run
 //! use std::thread;
-//! use duckdb::{DuckdbConnectionManager, params};
+//! use haybarn::{DuckdbConnectionManager, params};
 //! use r2d2;
 //!
 //! let manager = DuckdbConnectionManager::file("file.db").unwrap();
@@ -48,7 +48,7 @@ use std::fmt::Debug;
 #[cfg(feature = "vtab")]
 use crate::vtab::VTab;
 
-/// An `r2d2::ManageConnection` for `duckdb::Connection`s.
+/// An `r2d2::ManageConnection` for `haybarn::Connection`s.
 pub struct DuckdbConnectionManager {
     connection: Arc<Mutex<Connection>>,
 }

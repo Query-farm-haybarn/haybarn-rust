@@ -62,13 +62,13 @@ impl<'stmt> Rows<'stmt> {
     /// Map over this `Rows`, converting it to a [`Map`], which
     /// implements `FallibleIterator`.
     ///
-    /// **Note:** This method requires the closure to return `duckdb::Result<B>`.
+    /// **Note:** This method requires the closure to return `haybarn::Result<B>`.
     /// If you need to use custom error types, consider using [`and_then`](Self::and_then)
-    /// instead, which allows any error type that implements `From<duckdb::Error>`.
+    /// instead, which allows any error type that implements `From<haybarn::Error>`.
     ///
     /// ```rust,no_run
     /// use fallible_iterator::FallibleIterator;
-    /// # use duckdb::{Result, Statement};
+    /// # use haybarn::{Result, Statement};
     /// fn query(stmt: &mut Statement) -> Result<Vec<i64>> {
     ///     let rows = stmt.query([])?;
     ///     rows.map(|r| r.get(0)).collect()
@@ -113,7 +113,7 @@ impl<'stmt> Rows<'stmt> {
     /// # Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn process_results(conn: &Connection) -> Result<()> {
     ///     let mut stmt = conn.prepare("SELECT id, name FROM people")?;
     ///     let mut rows = stmt.query([])?;
@@ -234,7 +234,7 @@ where
 /// While these iterators cannot be used with Rust `for` loops, `while let`
 /// loops offer a similar level of ergonomics:
 /// ```rust,no_run
-/// # use duckdb::{Result, Statement};
+/// # use haybarn::{Result, Statement};
 /// fn query(stmt: &mut Statement) -> Result<()> {
 ///     let mut rows = stmt.query([])?;
 ///     while let Some(row) = rows.next()? {

@@ -10,7 +10,7 @@
 
 use std::{ffi::CString, marker::PhantomData, slice};
 
-use libduckdb_sys::{
+use libhaybarn_sys::{
     DuckDbString, duckdb_array_type_array_size, duckdb_array_vector_get_child, duckdb_validity_row_is_valid,
 };
 
@@ -212,7 +212,7 @@ impl Inserter<&Vec<u8>> for FlatVector<'_> {
 /// Regression guard for #673 — a `ListVector` must not outlive its parent chunk:
 ///
 /// ```compile_fail
-/// use duckdb::core::{DataChunkHandle, LogicalTypeHandle, LogicalTypeId};
+/// use haybarn::core::{DataChunkHandle, LogicalTypeHandle, LogicalTypeId};
 ///
 /// let vec;
 /// {

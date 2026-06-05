@@ -25,7 +25,7 @@ use arrow::{
     record_batch::RecordBatch,
 };
 
-use libduckdb_sys::{duckdb_date, duckdb_string_t, duckdb_time, duckdb_timestamp, duckdb_vector};
+use libhaybarn_sys::{duckdb_date, duckdb_string_t, duckdb_time, duckdb_timestamp, duckdb_vector};
 use num::{ToPrimitive, cast::AsPrimitive};
 
 /// A pointer to the Arrow record batch for the table function.

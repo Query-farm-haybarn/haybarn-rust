@@ -36,8 +36,8 @@ mod string;
 /// ## Example
 ///
 /// ```rust,no_run
-/// # use duckdb::{Connection, Result};
-/// # use duckdb::types::{Null};
+/// # use haybarn::{Connection, Result};
+/// # use haybarn::types::{Null};
 ///
 /// fn insert_null(conn: &Connection) -> Result<usize> {
 ///     conn.execute("INSERT INTO people (name) VALUES (?)", [Null])

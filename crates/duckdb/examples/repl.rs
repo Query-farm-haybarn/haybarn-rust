@@ -5,7 +5,7 @@
 // cargo run --example repl path/to/database.db -c "SELECT 1" -c "SELECT 2"
 // cat example.sql | cargo run --example repl
 
-use duckdb::{Connection, Result as DuckResult, arrow::record_batch::RecordBatch};
+use haybarn::{Connection, Result as DuckResult, arrow::record_batch::RecordBatch};
 use rustyline::{Config, Editor, error::ReadlineError, history::DefaultHistory};
 
 const HISTORY_FILE: &str = ".duckdb_rs_history";

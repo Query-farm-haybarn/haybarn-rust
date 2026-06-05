@@ -1,4 +1,4 @@
-use duckdb::{Connection, DropBehavior, Result, params};
+use haybarn::{Connection, DropBehavior, Result, params};
 
 fn main() -> Result<()> {
     //let mut db = Connection::open("10m.db")?;

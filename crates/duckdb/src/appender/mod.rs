@@ -50,7 +50,7 @@ use crate::{
 /// ## 3. `appender_params_from_iter` - pass an iterator directly
 ///
 /// ```rust,ignore
-/// use duckdb::appender_params_from_iter;
+/// use haybarn::appender_params_from_iter;
 /// let values: Vec<i32> = vec![0; 100];
 /// appender.append_row(appender_params_from_iter(values))?;
 /// ```
@@ -70,7 +70,7 @@ impl Appender<'_> {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result, params};
+    /// # use haybarn::{Connection, Result, params};
     /// fn insert_rows(conn: &Connection) -> Result<()> {
     ///     let mut app = conn.appender("foo")?;
     ///     app.append_rows([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])?;
@@ -98,7 +98,7 @@ impl Appender<'_> {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result, params};
+    /// # use haybarn::{Connection, Result, params};
     /// fn insert_row(conn: &Connection) -> Result<()> {
     ///     let mut app = conn.appender("foo")?;
     ///     app.append_row([1, 2])?;

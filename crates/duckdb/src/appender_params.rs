@@ -31,8 +31,8 @@ use sealed::Sealed;
 /// parameters is known at compile time, this can be done in one of the
 /// following ways:
 ///
-/// - Using the [`duckdb::params!`](crate::params!) macro, e.g.
-///   `thing.query(duckdb::params![1, "foo", bar])`. This is mostly useful for
+/// - Using the [`haybarn::params!`](crate::params!) macro, e.g.
+///   `thing.query(haybarn::params![1, "foo", bar])`. This is mostly useful for
 ///   heterogeneous lists of parameters, or lists where the number of parameters
 ///   exceeds 32.
 ///
@@ -47,7 +47,7 @@ use sealed::Sealed;
 ///       (Note: in this case we don't implement this for slices for coherence
 ///       reasons, so it really is only for the "reference to array" types —
 ///       hence why the number of parameters must be <= 32 or you need to
-///       reach for `duckdb::params!`)
+///       reach for `haybarn::params!`)
 ///
 ///   Unfortunately, in the current design it's not possible to allow this for
 ///   references to arrays of non-references (e.g. `&[1i32, 2, 3]`). Code like
@@ -61,11 +61,11 @@ use sealed::Sealed;
 /// ### Example (positional)
 ///
 /// ```rust,no_run
-/// # use duckdb::{Connection, Result, params};
+/// # use haybarn::{Connection, Result, params};
 /// fn update_rows(conn: &Connection) -> Result<()> {
 ///     let mut stmt = conn.prepare("INSERT INTO test (a, b) VALUES (?, ?)")?;
 ///
-///     // Using `duckdb::params!`:
+///     // Using `haybarn::params!`:
 ///     stmt.execute(params![1i32, "blah"])?;
 ///
 ///     // array literal — non-references
@@ -89,13 +89,13 @@ use sealed::Sealed;
 /// ## No parameters
 ///
 /// You can just use an empty array literal for no params. The
-/// `duckdb::NO_PARAMS` constant which was so common in previous versions of
+/// `haybarn::NO_PARAMS` constant which was so common in previous versions of
 /// this library is no longer needed (and is now deprecated).
 ///
 /// ### Example (no parameters)
 ///
 /// ```rust,no_run
-/// # use duckdb::{Connection, Result, params};
+/// # use haybarn::{Connection, Result, params};
 /// fn delete_all_users(conn: &Connection) -> Result<()> {
 ///     // Just use an empty array (e.g. `[]`) for no params.
 ///     conn.execute("DELETE FROM users", [])?;
@@ -237,7 +237,7 @@ impl_appender_params_for_tuple!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T1
 /// ## Basic usage
 ///
 /// ```rust,no_run
-/// use duckdb::{Connection, Result, params_from_iter};
+/// use haybarn::{Connection, Result, params_from_iter};
 /// use std::collections::BTreeSet;
 ///
 /// fn query(conn: &Connection, ids: &BTreeSet<String>) -> Result<()> {
@@ -257,7 +257,7 @@ impl_appender_params_for_tuple!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T1
 /// dynamic number of parameters.
 ///
 /// ```rust,no_run
-/// use duckdb::{Connection, Result};
+/// use haybarn::{Connection, Result};
 ///
 /// pub fn any_active_users(conn: &Connection, usernames: &[String]) -> Result<bool> {
 ///     if usernames.is_empty() {
@@ -274,7 +274,7 @@ impl_appender_params_for_tuple!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T1
 ///         vars,
 ///     );
 ///     let mut stmt = conn.prepare(&sql)?;
-///     stmt.exists(duckdb::params_from_iter(usernames))
+///     stmt.exists(haybarn::params_from_iter(usernames))
 /// }
 ///
 /// // Helper function to return a comma-separated sequence of `?`.

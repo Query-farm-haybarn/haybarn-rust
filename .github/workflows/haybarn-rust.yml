@@ -1,0 +1,77 @@
+name: Haybarn Rust Publish
+
+# Publishes the Haybarn Rust crates to crates.io on a `haybarn-v*` tag, using
+# crates.io Trusted Publishing (GitHub OIDC) — no long-lived registry token.
+#
+# ONE-TIME BOOTSTRAP (Trusted Publishing has no pending-publisher flow like PyPI):
+#   1. `cargo publish` each crate name ONCE manually to create it on crates.io,
+#      in this order: libhaybarn-sys, haybarn-loadable-macros, haybarn.
+#   2. On crates.io, for each crate add a Trusted Publisher:
+#        repository = Query-farm-haybarn/haybarn-rust, workflow = haybarn-rust.yml
+#   After that, tagging `haybarn-v<version>` runs this workflow hands-free.
+
+on:
+  push:
+    tags: ["haybarn-v*"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write   # required for crates.io Trusted Publishing (OIDC)
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      # The committed crates/libduckdb-sys/duckdb.tar.gz is what `bundled` ships;
+      # the duckdb-sources submodule is excluded from the package, so we do NOT
+      # need to fetch the (large) Haybarn engine submodule here.
+      - uses: actions/checkout@v5
+        with:
+          submodules: false
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      # Exchange the GitHub OIDC token for a short-lived crates.io token.
+      - name: Authenticate to crates.io (Trusted Publishing)
+        uses: rust-lang/crates-io-auth-action@v1
+        id: auth
+
+      # Publish in dependency order. --no-verify skips the build step (the
+      # default, non-bundled feature set would try to find a system libduckdb);
+      # packaging still validates the manifest and bundles duckdb.tar.gz.
+      - name: Publish libhaybarn-sys
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+        run: cargo publish -p libhaybarn-sys --no-verify
+
+      - name: Publish haybarn-loadable-macros
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+        run: cargo publish -p haybarn-loadable-macros --no-verify
+
+      # haybarn depends on the exact (=) versions above; wait for the sparse
+      # index to serve them before publishing the wrapper.
+      - name: Wait for dependencies to index
+        run: |
+          ver="$(cargo metadata --no-deps --format-version 1 \
+            | python3 -c 'import sys,json;print(json.load(sys.stdin)["packages"][0]["version"])')"
+          for crate in libhaybarn-sys haybarn-loadable-macros; do
+            echo "Waiting for $crate@$ver on the sparse index..."
+            for i in $(seq 1 60); do
+              if curl -fsS "https://index.crates.io/${crate:0:2}/${crate:2:2}/${crate}" 2>/dev/null \
+                   | grep -q "\"vers\":\"$ver\""; then
+                echo "  $crate@$ver is available"; break
+              fi
+              sleep 10
+            done
+          done
+
+      - name: Publish haybarn
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+        run: cargo publish -p haybarn --no-verify

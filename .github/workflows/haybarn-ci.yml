@@ -1,0 +1,53 @@
+name: Haybarn Rust CI
+
+# Smoke CI for the Haybarn fork: builds and tests the supported `bundled` path,
+# which compiles the Haybarn engine amalgamation (crates/libduckdb-sys/duckdb.tar.gz)
+# carrying the Haybarn extension trust root. The non-bundled paths are unsupported
+# for Haybarn and intentionally not exercised here.
+
+on:
+  push:
+    branches: ["haybarn"]
+  pull_request:
+    branches: ["haybarn"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  build-test:
+    name: build + test (bundled) — ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      # bundled uses the committed duckdb.tar.gz; the engine submodule is not needed.
+      - uses: actions/checkout@v5
+        with:
+          submodules: false
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt, clippy
+
+      - name: Build (bundled)
+        run: cargo build -p haybarn --features bundled
+
+      - name: Test (bundled)
+        run: cargo test -p haybarn --features bundled
+
+      - name: Verify the bundled amalgamation carries the Haybarn trust root
+        shell: bash
+        run: |
+          tar xzf crates/libduckdb-sys/duckdb.tar.gz -O \
+            duckdb/src/main/extension/extension_helper.cpp \
+            | grep -q HAYBARN_TRUST_ROOT \
+            && echo "OK: Haybarn trust root present" \
+            || { echo "FAIL: trust root missing from bundled sources"; exit 1; }

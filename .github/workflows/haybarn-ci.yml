@@ -51,3 +51,5 @@ jobs:
             | grep -q HAYBARN_TRUST_ROOT \
             && echo "OK: Haybarn trust root present" \
             || { echo "FAIL: trust root missing from bundled sources"; exit 1; }
+
+# (registered via follow-up push)

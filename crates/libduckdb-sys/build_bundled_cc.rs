@@ -122,6 +122,12 @@ pub fn main(out_dir: &str, out_path: &Path) {
 
     if win_target() {
         cfg.define("DUCKDB_BUILD_LIBRARY", None);
+        // The engine's duckdb::AdditionalLockInfo (Windows file-lock diagnostics)
+        // calls the Restart Manager API (RmStartSession/RmEndSession/
+        // RmRegisterResources/RmGetList), which lives in Rstrtmgr.lib. The cc
+        // static archive doesn't pull it in, so request it explicitly or the
+        // bundled link fails with LNK2019 unresolved externals.
+        println!("cargo:rustc-link-lib=dylib=rstrtmgr");
     }
     cfg.compile("duckdb");
 

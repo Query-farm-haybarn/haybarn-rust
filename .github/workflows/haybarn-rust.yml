@@ -37,8 +37,10 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
 
       # Exchange the GitHub OIDC token for a short-lived crates.io token.
+      # Pinned to v1.0.4 (runs on Node 24); the floating @v1 tag is stale and
+      # still declares Node 20, which GitHub force-retires on 2026-06-16.
       - name: Authenticate to crates.io (Trusted Publishing)
-        uses: rust-lang/crates-io-auth-action@v1
+        uses: rust-lang/crates-io-auth-action@v1.0.4
         id: auth
 
       # Publish in dependency order, idempotently: any crate@version already on

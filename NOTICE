@@ -1,0 +1,49 @@
+Haybarn — Rust crate
+Copyright (c) 2026 Query Farm LLC
+
+This product is a derived distribution of DuckDB, powered by DuckDB.
+Haybarn is independent of and not endorsed by the DuckDB Foundation.
+DuckDB is a trademark of the DuckDB Foundation
+(https://duckdb.org/trademark_guidelines).
+
+This repository is a hard fork of duckdb/duckdb-rs (tag v1.10503.1, which
+corresponds to the DuckDB 1.5.3 engine). The upstream MIT LICENSE is preserved
+verbatim. Modifications introduced by Haybarn:
+
+  - Published crate names renamed:
+      duckdb                -> haybarn
+      libduckdb-sys         -> libhaybarn-sys
+      duckdb-loadable-macros -> haybarn-loadable-macros
+    The on-disk crate directories under crates/ keep their upstream names so the
+    Haybarn changes remain a thin, rebasable stack on top of the upstream tag.
+
+  - The wrapper crate's library name is `haybarn` ([lib] name). The C API, the
+    `duckdb::` C++ namespace, the public headers (duckdb.h / duckdb.hpp), and the
+    DUCKDB_VERSION macro are preserved verbatim — Haybarn is intentionally
+    ABI-compatible with DuckDB.
+
+  - The sys crate's `links` key is renamed from "duckdb" to "haybarn" so the
+    crate can coexist in a dependency graph with the upstream libduckdb-sys.
+    Downstream build scripts read DEP_HAYBARN_* instead of DEP_DUCKDB_*.
+
+  - haybarn-loadable-macros emits `::haybarn::ffi` paths (renamed from
+    `::duckdb::ffi`).
+
+  - The bundled amalgamation (crates/libduckdb-sys/duckdb.tar.gz) is regenerated
+    from the Haybarn engine via the duckdb-sources submodule, which is re-pointed
+    at Query-farm-haybarn/haybarn. As a result the bundled build embeds the
+    single Haybarn RSA extension trust root (for both core and community
+    extensions) and the haybarn-extensions.query.farm repository URLs.
+    DuckDB-signed extensions will not load.
+
+  - Only the `bundled` build path is wired for Haybarn. The system-library
+    discovery (pkg-config / vcpkg) and DUCKDB_DOWNLOAD_LIB paths inherited from
+    upstream still reference DuckDB and are unsupported until rebranded.
+
+  - README rebranded; duck-themed branding and examples removed.
+
+Source for the underlying Haybarn engine (DuckDB as modified by Haybarn) is at:
+https://github.com/Query-farm-haybarn/haybarn
+
+The original duckdb-rs project lives at:
+https://github.com/duckdb/duckdb-rs

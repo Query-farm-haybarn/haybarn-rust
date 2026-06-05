@@ -52,19 +52,34 @@ so the bundled build embeds the single Haybarn RSA key (core + community) and th
 
 ### Regenerating the amalgamation (after an engine bump)
 
+**`OVERRIDE_GIT_DESCRIBE` is mandatory.** The engine reports its version from a
+`git describe`, and an rc commit sits *ahead* of the release tag (e.g.
+`haybarn-v1.5.3-rc7` is ~128 commits past the `v1.5.3` base tag), so a bare
+describe yields a `-dev` version like `v1.5.4-dev128`. DuckDB's
+`ExtensionHelper::GetVersionDirectoryName()` then treats the engine as a dev
+build and resolves extensions under the **git source id** instead of the version
+directory — so `INSTALL`/`LOAD` would look under a SHA that doesn't exist on
+`haybarn-extensions.query.farm`. Stamp the **release** version instead (matching
+where Haybarn extensions are published, `/core/v<X.Y.Z>/` + `/community/...`):
+
 ```shell
 cd crates/libduckdb-sys
 git -C duckdb-sources fetch origin
 git -C duckdb-sources checkout haybarn-v<version>   # e.g. haybarn-v1.5.3-rc7
-python3 update_sources.py                            # rewrites duckdb.tar.gz
+# Stamp DUCKDB_VERSION = the RELEASE (no rc/-dev), keep the real commit as source id:
+SHA=$(git -C duckdb-sources rev-parse --short=10 HEAD)
+OVERRIDE_GIT_DESCRIBE="v1.5.3-0-g${SHA}" python3 update_sources.py   # rewrites duckdb.tar.gz
 ```
 
-Commit the updated `duckdb.tar.gz` and the submodule pointer together. Verify the
-new tarball carries the Haybarn key:
+The `-0-` (zero commits since the tag) is what makes `package_build.py` emit the
+clean `v1.5.3` rather than a `-devN` string. Commit the updated `duckdb.tar.gz`
+and the submodule pointer together. Verify the result:
 
 ```shell
+tar xzf duckdb.tar.gz -O duckdb/src/function/table/version/pragma_version.cpp \
+  | grep -E '#define DUCKDB_(VERSION|SOURCE_ID)'      # VERSION must be "v1.5.3", no -dev
 tar xzf duckdb.tar.gz -O duckdb/src/main/extension/extension_helper.cpp \
-  | grep -q HAYBARN_TRUST_ROOT && echo OK
+  | grep -q HAYBARN_TRUST_ROOT && echo "trust root OK"
 ```
 
 ## Supported build paths

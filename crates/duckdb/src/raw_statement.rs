@@ -248,6 +248,75 @@ impl RawStatement {
         self.schema.clone().unwrap()
     }
 
+    /// Derive the Arrow schema of the executed *streaming* result using the
+    /// modern, transaction-aware C API (`duckdb_to_arrow_schema`).
+    ///
+    /// Unlike the deprecated `duckdb_query_arrow_schema` used by `execute()` —
+    /// which converts a detached, materialized result outside any transaction
+    /// and aborts the process for column types whose Arrow mapping needs
+    /// catalog access (e.g. a `GEOMETRY` with a CRS) — this runs with the live
+    /// streaming result's arrow options, which carry an active transaction, so
+    /// such columns convert cleanly and errors are returned, not asserted.
+    ///
+    /// Requires `execute_streaming()` to have been called first.
+    pub fn arrow_schema(&self) -> Result<SchemaRef> {
+        let mut result = self.duckdb_result.ok_or_else(|| {
+            Error::DuckDBFailure(
+                ffi::Error::new(ffi::DuckDBError),
+                Some("statement has no streaming result; call execute_streaming first".to_string()),
+            )
+        })?;
+        unsafe { Self::arrow_schema_from_result(&mut result) }
+    }
+
+    unsafe fn arrow_schema_from_result(result: *mut ffi::duckdb_result) -> Result<SchemaRef> {
+        unsafe {
+            let n = ffi::duckdb_column_count(result);
+            let arrow_options = ffi::duckdb_result_get_arrow_options(result);
+
+            let mut types: Vec<ffi::duckdb_logical_type> =
+                (0..n).map(|i| ffi::duckdb_column_logical_type(result, i)).collect();
+            // Column name pointers are owned by `result` and valid for this call.
+            let mut name_ptrs: Vec<*const std::os::raw::c_char> =
+                (0..n).map(|i| ffi::duckdb_column_name(result, i)).collect();
+
+            let mut c_schema = FFI_ArrowSchema::empty();
+            let mut err = ffi::duckdb_to_arrow_schema(
+                arrow_options,
+                types.as_mut_ptr(),
+                name_ptrs.as_mut_ptr(),
+                n,
+                &mut c_schema as *mut FFI_ArrowSchema as *mut ffi::ArrowSchema,
+            );
+
+            // Release engine-owned handles regardless of outcome.
+            for t in &mut types {
+                ffi::duckdb_destroy_logical_type(t);
+            }
+            let mut arrow_options = arrow_options;
+            ffi::duckdb_destroy_arrow_options(&mut arrow_options);
+
+            let outcome = if ffi::duckdb_error_data_has_error(err) {
+                let msg_ptr = ffi::duckdb_error_data_message(err);
+                let msg = if msg_ptr.is_null() {
+                    None
+                } else {
+                    Some(CStr::from_ptr(msg_ptr).to_string_lossy().to_string())
+                };
+                Err(Error::DuckDBFailure(ffi::Error::new(ffi::DuckDBError), msg))
+            } else {
+                Schema::try_from(&c_schema).map(Arc::new).map_err(|e| {
+                    Error::DuckDBFailure(
+                        ffi::Error::new(ffi::DuckDBError),
+                        Some(format!("failed to import Arrow schema from engine: {e}")),
+                    )
+                })
+            };
+            ffi::duckdb_destroy_error_data(&mut err);
+            outcome
+        }
+    }
+
     #[inline]
     pub fn column_name(&self, idx: usize) -> Option<&String> {
         if idx >= self.column_count() {
@@ -319,7 +388,25 @@ impl RawStatement {
             let rc = ffi::duckdb_query_arrow_schema(out, &mut c_schema as *mut _ as *mut ffi::duckdb_arrow_schema);
             if rc != ffi::DuckDBSuccess {
                 Rc::from_raw(c_schema);
-                result_from_duckdb_arrow(rc, out)?;
+                // The query executed fine, but converting its result schema to
+                // Arrow failed (e.g. a GEOMETRY column whose CRS can't be
+                // resolved in this context). That failure is reported only via
+                // the return code: the underlying result carries no error,
+                // because the engine's C API swallowed the exception in a
+                // `catch (...)`. Routing this through `result_from_duckdb_arrow`
+                // would call the result's error accessor, which hits
+                // `D_ASSERT(HasError())` and aborts the whole process. Clean up
+                // and surface a synthetic error instead.
+                ffi::duckdb_destroy_arrow(&mut out);
+                return Err(Error::DuckDBFailure(
+                    ffi::Error::new(rc),
+                    Some(
+                        "failed to convert result schema to Arrow; a result column type may \
+                         be unsupported in this execution context (for example, a GEOMETRY \
+                         with a CRS serialized outside an active transaction)"
+                            .to_string(),
+                    ),
+                ));
             }
             self.schema = Some(Arc::new(Schema::try_from(&*c_schema).unwrap()));
             Rc::from_raw(c_schema);

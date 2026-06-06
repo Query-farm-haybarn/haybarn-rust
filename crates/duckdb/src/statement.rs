@@ -143,6 +143,22 @@ impl Statement<'_> {
         Ok(ArrowStream::new(self, schema))
     }
 
+    /// Execute the prepared statement and return a streaming Arrow handle,
+    /// deriving the result schema automatically via the modern,
+    /// transaction-aware API (no caller-supplied schema needed).
+    ///
+    /// Prefer this over [`query_arrow`](Self::query_arrow) when the result may
+    /// contain types whose Arrow conversion needs catalog access (e.g. a
+    /// `GEOMETRY` with a CRS): streaming keeps a transaction active during
+    /// conversion, so those columns serialize cleanly instead of failing.
+    #[inline]
+    pub fn stream_arrow_auto<P: Params>(&mut self, params: P) -> Result<ArrowStream<'_>> {
+        params.__bind_in(self)?;
+        self.stmt.execute_streaming()?;
+        let schema = self.stmt.arrow_schema()?;
+        Ok(ArrowStream::new(self, schema))
+    }
+
     /// Execute the prepared statement, returning a handle to the resulting
     /// vector of polars DataFrame.
     ///

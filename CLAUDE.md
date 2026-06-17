@@ -8,8 +8,8 @@ Guidance for Claude Code working in this repository.
 [Haybarn](https://github.com/Query-farm-haybarn/haybarn) — an independent
 derived distribution of DuckDB ("Haybarn, powered by DuckDB"), published by
 Query Farm LLC. This repo is a **hard fork** of `duckdb/duckdb-rs`, based on
-upstream tag **`v1.10503.1`** (the crate version encodes the engine version as
-`1.MAJOR_MINOR_PATCH.x`, so `1.10503.x` == DuckDB **1.5.3**).
+upstream tag **`v1.10504.1`** (the crate version encodes the engine version as
+`1.MAJOR_MINOR_PATCH.x`, so `1.10504.x` == DuckDB **1.5.4**).
 
 All Haybarn-specific changes are a small, curated **commit stack** on top of the
 upstream tag — not scattered edits. Keep it that way: the stack must stay easy to

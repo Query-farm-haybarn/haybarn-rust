@@ -8,7 +8,7 @@
 //! caller-chosen and must not exceed the DuckDB vector's actual validity —
 //! that path does not track liveness in the type system.
 
-use libduckdb_sys::duckdb_validity_row_is_valid;
+use libhaybarn_sys::duckdb_validity_row_is_valid;
 
 use crate::{
     Result,

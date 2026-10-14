@@ -29,7 +29,7 @@ pub enum DropBehavior {
 /// ## Example
 ///
 /// ```rust,no_run
-/// # use duckdb::{Connection, Result};
+/// # use haybarn::{Connection, Result};
 /// # fn do_queries_part_1(_conn: &Connection) -> Result<()> { Ok(()) }
 /// # fn do_queries_part_2(_conn: &Connection) -> Result<()> { Ok(()) }
 /// fn perform_queries(conn: &mut Connection) -> Result<()> {
@@ -160,7 +160,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// # fn do_queries_part_1(_conn: &Connection) -> Result<()> { Ok(()) }
     /// # fn do_queries_part_2(_conn: &Connection) -> Result<()> { Ok(()) }
     /// fn perform_queries(conn: &mut Connection) -> Result<()> {
@@ -194,7 +194,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// # use std::rc::Rc;
     /// # fn do_queries_part_1(_conn: &Connection) -> Result<()> { Ok(()) }
     /// # fn do_queries_part_2(_conn: &Connection) -> Result<()> { Ok(()) }

@@ -9,7 +9,7 @@ use arrow::{
     datatypes::*,
     record_batch::RecordBatch,
 };
-use libduckdb_sys::{duckdb_date, duckdb_string_t, duckdb_time, duckdb_vector, duckdb_vector_get_column_type};
+use libhaybarn_sys::{duckdb_date, duckdb_string_t, duckdb_time, duckdb_vector, duckdb_vector_get_column_type};
 
 use crate::{
     core::{ArrayVector, DataChunkHandle, FlatVector, ListVector, LogicalTypeHandle, LogicalTypeId, StructVector},

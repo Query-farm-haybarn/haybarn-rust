@@ -1,5 +1,5 @@
 [package]
-name = "duckdb-loadable-macros"
+name = "haybarn-loadable-macros"
 version = { workspace = true }
 authors = { workspace = true }
 license = { workspace = true }
@@ -8,7 +8,7 @@ homepage = { workspace = true }
 keywords = { workspace = true }
 readme = { workspace = true }
 categories = ["external-ffi-bindings", "database"]
-description = "Native bindings to the libduckdb library, C API; build loadable extensions"
+description = "Proc-macros for building loadable Haybarn (powered by DuckDB) extensions in Rust"
 edition = { workspace = true }
 rust-version = { workspace = true }
 

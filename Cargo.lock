@@ -847,46 +847,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "780955b8b195a21ab8e4ac6b60dd1dbdcec1dc6c51c0617964b08c81785e12c9"
 
 [[package]]
-name = "duckdb"
-version = "1.10506.0"
-dependencies = [
- "arrow",
- "cast",
- "chrono",
- "comfy-table",
- "doc-comment",
- "duckdb-loadable-macros",
- "fallible-iterator",
- "fallible-streaming-iterator",
- "hashlink",
- "libduckdb-sys",
- "num",
- "num-integer",
- "polars",
- "polars-core",
- "pretty_assertions",
- "r2d2",
- "rand 0.9.5",
- "rust_decimal",
- "rustyline",
- "serde_json",
- "strum",
- "tempfile",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "duckdb-loadable-macros"
-version = "1.10506.0"
-dependencies = [
- "darling",
- "proc-macro2",
- "quote",
- "syn 2.0.119",
-]
-
-[[package]]
 name = "dyn-clone"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1285,6 +1245,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "haybarn"
+version = "1.10506.0"
+dependencies = [
+ "arrow",
+ "cast",
+ "chrono",
+ "comfy-table",
+ "doc-comment",
+ "fallible-iterator",
+ "fallible-streaming-iterator",
+ "hashlink",
+ "haybarn-loadable-macros",
+ "libhaybarn-sys",
+ "num",
+ "num-integer",
+ "polars",
+ "polars-core",
+ "pretty_assertions",
+ "r2d2",
+ "rand 0.9.5",
+ "rust_decimal",
+ "rustyline",
+ "serde_json",
+ "strum",
+ "tempfile",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "haybarn-loadable-macros"
+version = "1.10506.0"
+dependencies = [
+ "darling",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
 name = "heck"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1669,7 +1669,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
 
 [[package]]
-name = "libduckdb-sys"
+name = "libhaybarn-sys"
 version = "1.10506.0"
 dependencies = [
  "arrow",

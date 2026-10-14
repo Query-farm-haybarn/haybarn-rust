@@ -69,9 +69,9 @@ pub fn duckdb_entrypoint_c_api(attr: TokenStream, item: TokenStream) -> TokenStr
                 /// # Safety
                 ///
                 /// Internal Entrypoint for error handling
-                pub unsafe fn #c_entrypoint_internal(info: ::duckdb::ffi::duckdb_extension_info, access: *const ::duckdb::ffi::duckdb_extension_access) -> ::std::result::Result<bool, Box<dyn ::std::error::Error>> {
+                pub unsafe fn #c_entrypoint_internal(info: ::haybarn::ffi::duckdb_extension_info, access: *const ::haybarn::ffi::duckdb_extension_access) -> ::std::result::Result<bool, Box<dyn ::std::error::Error>> {
                     unsafe {
-                        let have_api_struct = ::duckdb::ffi::duckdb_rs_extension_api_init(info, access, #minimum_duckdb_version)?;
+                        let have_api_struct = ::haybarn::ffi::duckdb_rs_extension_api_init(info, access, #minimum_duckdb_version)?;
                         if !have_api_struct {
                             // initialization failed to return an api struct, likely due to an API version mismatch, we can simply return here
                             return Ok(false);
@@ -85,8 +85,8 @@ pub fn duckdb_entrypoint_c_api(attr: TokenStream, item: TokenStream) -> TokenStr
                             // DuckDB already has the real reason for returning a null database handle.
                             return Ok(false);
                         }
-                        let db: ::duckdb::ffi::duckdb_database = *db_ptr;
-                        let connection = ::duckdb::Connection::open_from_raw(db.cast())?;
+                        let db: ::haybarn::ffi::duckdb_database = *db_ptr;
+                        let connection = ::haybarn::Connection::open_from_raw(db.cast())?;
 
                         #prefixed_original_function(connection)?;
 
@@ -98,7 +98,7 @@ pub fn duckdb_entrypoint_c_api(attr: TokenStream, item: TokenStream) -> TokenStr
                 ///
                 /// Entrypoint that will be called by DuckDB
                 #[unsafe(no_mangle)]
-                pub unsafe extern "C" fn #c_entrypoint(info: ::duckdb::ffi::duckdb_extension_info, access: *const ::duckdb::ffi::duckdb_extension_access) -> bool {
+                pub unsafe extern "C" fn #c_entrypoint(info: ::haybarn::ffi::duckdb_extension_info, access: *const ::haybarn::ffi::duckdb_extension_access) -> bool {
                     unsafe {
                         let init_result = #c_entrypoint_internal(info, access);
 

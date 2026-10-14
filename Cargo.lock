@@ -1246,7 +1246,7 @@ dependencies = [
 
 [[package]]
 name = "haybarn"
-version = "1.10506.0"
+version = "1.10506.0-rc.2"
 dependencies = [
  "arrow",
  "cast",
@@ -1276,7 +1276,7 @@ dependencies = [
 
 [[package]]
 name = "haybarn-loadable-macros"
-version = "1.10506.0"
+version = "1.10506.0-rc.2"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -1670,7 +1670,7 @@ checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
 
 [[package]]
 name = "libhaybarn-sys"
-version = "1.10506.0"
+version = "1.10506.0-rc.2"
 dependencies = [
  "arrow",
  "bindgen",

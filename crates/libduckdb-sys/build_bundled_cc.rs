@@ -123,7 +123,8 @@ pub fn main(out_dir: &str) {
 
     // Inside libduckdb.a nothing references the autoregister object, so the linker would drop it
     // and linked extensions would never register. Link it whole-archive, before libduckdb.
-    if cpp_files.remove(STATIC_EXTENSION_AUTOREGISTER) {
+    let autoregister = cpp_files.remove(STATIC_EXTENSION_AUTOREGISTER);
+    if autoregister {
         build_static_extension_autoregister(out_dir);
     }
 
@@ -170,6 +171,14 @@ pub fn main(out_dir: &str) {
 
     if win_target() {
         cfg.define("DUCKDB_BUILD_LIBRARY", None);
+    }
+    // Haybarn: don't bundle libduckdb.a into the rlib. A bundled archive is placed with
+    // the rlib, ahead of the whole-archive autoregister library on the final link line,
+    // so order-sensitive linkers (GNU ld, e.g. aarch64 Linux without rust-lld) drop the
+    // loader member and fail with an undefined `duckdb_register_static_extensions`.
+    // Unbundled, both archives are passed in declaration order: autoregister, then libduckdb.
+    if autoregister {
+        cfg.link_lib_modifier("-bundle");
     }
     cfg.compile("duckdb");
 

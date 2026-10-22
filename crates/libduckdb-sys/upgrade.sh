@@ -102,7 +102,10 @@ else
 fi
 git checkout "$DUCKDB_TARGET"
 cd "$SCRIPT_DIR"
-python3 "$SCRIPT_DIR/update_sources.py"
+# Haybarn: stamp the release version. 2.0's package_build.py otherwise stamps
+# vX.Y.Z-dev<commit count>, which makes INSTALL/LOAD resolve extensions under the
+# source id instead of /core/vX.Y.Z/ on haybarn-extensions.query.farm.
+OVERRIDE_GIT_DESCRIBE="$DUCKDB_VERSION" python3 "$SCRIPT_DIR/update_sources.py"
 
 regenerate_bindings "$SCRIPT_DIR/src/bindgen_bundled_version.rs" bindgen.rs buildtime_bindgen capi-v1
 regenerate_bindings "$SCRIPT_DIR/src/bindgen_bundled_version_loadable.rs" bindgen.rs buildtime_bindgen capi-v1 loadable-extension

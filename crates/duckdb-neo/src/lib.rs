@@ -380,10 +380,14 @@ mod tests {
 
     #[test]
     fn test_library_version() -> crate::Result<()> {
-        let expected = include_str!("../../libduckdb-sys/.duckdb-release")
+        let pinned = include_str!("../../libduckdb-sys/.duckdb-release")
             .lines()
             .find_map(|line| line.strip_prefix("DUCKDB_RELEASE_VERSION="))
             .expect("release pin must specify DUCKDB_RELEASE_VERSION");
+        // Haybarn pins a release tag (`haybarn-vX.Y.Z[-rcN]`); the engine reports `vX.Y.Z`.
+        let expected = pinned
+            .strip_prefix("haybarn-")
+            .map_or(pinned, |tag| tag.split_once("-rc").map_or(tag, |(version, _)| version));
         assert_eq!(library_version()?, expected);
 
         Ok(())

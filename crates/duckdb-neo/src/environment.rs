@@ -35,7 +35,7 @@ unsafe impl Sync for EnvironmentHandle {}
 ///
 /// # Example
 /// ```rust
-/// use duckdb_neo::{
+/// use haybarn_neo::{
 ///     Parameters,
 ///     environment::Environment,
 ///     environment::StorageLocation,
@@ -92,7 +92,7 @@ impl From<&StorageLocation> for String {
 ///
 /// # Example
 /// ```rust
-/// use duckdb_neo::{Parameters, environment::Environment, environment::StorageLocation};
+/// use haybarn_neo::{Parameters, environment::Environment, environment::StorageLocation};
 ///
 /// let env = Environment::new().expect("Failed to create environment");
 /// let instance = env.open(StorageLocation::InMemory).expect("Failed to open database");

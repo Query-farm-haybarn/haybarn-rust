@@ -917,7 +917,7 @@ pub trait CopyToFunctionCallbacks: Send + Sync + 'static {
     /// `context`; neither the reference nor its scan can escape the callback.
     ///
     /// ```compile_fail,E0507
-    /// # use duckdb_neo::column_data_collection::ColumnDataCollection;
+    /// # use haybarn_neo::column_data_collection::ColumnDataCollection;
     /// fn take_input<'a>(input: &ColumnDataCollection<'a>) -> ColumnDataCollection<'a> {
     ///     *input
     /// }

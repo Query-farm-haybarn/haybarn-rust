@@ -11,8 +11,8 @@ use super::{VectorElement, VectorReader};
 /// storage layouts may be combined without flattening.
 ///
 /// ```
-/// # use duckdb_neo::{Parameters, Result, environment::{Environment, StorageLocation}};
-/// use duckdb_neo::vector::CombinedVectorIterator;
+/// # use haybarn_neo::{Parameters, Result, environment::{Environment, StorageLocation}};
+/// use haybarn_neo::vector::CombinedVectorIterator;
 /// # fn main() -> Result<()> {
 /// # let env = Environment::new()?;
 /// # let conn = env.open(StorageLocation::InMemory)?.connect()?;
@@ -30,7 +30,7 @@ use super::{VectorElement, VectorReader};
 /// Readers keep their source vectors borrowed for as long as iteration needs them:
 ///
 /// ```compile_fail,E0502
-/// use duckdb_neo::{Result, vector::{CombinedVectorIterator, Vector}};
+/// use haybarn_neo::{Result, vector::{CombinedVectorIterator, Vector}};
 ///
 /// fn resize(vector: &mut Vector<'_, i32>) -> Result<()> {
 ///     let mut rows = CombinedVectorIterator::new((vector.reader()?,))?;

@@ -1,4 +1,4 @@
-use duckdb_neo::{
+use haybarn_neo::{
     FromValue, Parameters, Result,
     connection::Connection,
     environment::{Environment, StorageLocation},

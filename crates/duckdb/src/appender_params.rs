@@ -24,7 +24,7 @@ use sealed::Sealed;
 ///
 /// - tuples of mixed types, up to 16 elements;
 /// - arrays and references to arrays, up to 32 elements;
-/// - [`duckdb::params!`](crate::params!) or `&[&dyn ToSql]` for heterogeneous
+/// - [`haybarn::params!`](crate::params!) or `&[&dyn ToSql]` for heterogeneous
 ///   rows or rows assembled dynamically;
 /// - [`appender_params_from_iter`] for iterators over one concrete
 ///   [`ToSql`] item type.
@@ -32,7 +32,7 @@ use sealed::Sealed;
 /// # Example
 ///
 /// ```rust,no_run
-/// # use duckdb::{Connection, Result, params};
+/// # use haybarn::{Connection, Result, params};
 /// fn append_rows(conn: &Connection) -> Result<()> {
 ///     conn.execute_batch("CREATE TABLE people (id INTEGER, name TEXT)")?;
 ///     let mut appender = conn.appender("people")?;
@@ -154,14 +154,14 @@ impl_appender_params_for_tuple!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T1
 /// something like a `Vec<&dyn ToSql>`.
 ///
 /// The iterator must yield one concrete item type that implements [`ToSql`].
-/// For heterogeneous rows, use a tuple, [`duckdb::params!`](crate::params!), or
+/// For heterogeneous rows, use a tuple, [`haybarn::params!`](crate::params!), or
 /// a `&[&dyn ToSql]`. As with every [`Appender::append_row`] call, the number
 /// of values must match the target table's column count.
 ///
 /// # Example
 ///
 /// ```rust,no_run
-/// use duckdb::{Connection, Result, appender_params_from_iter};
+/// use haybarn::{Connection, Result, appender_params_from_iter};
 ///
 /// fn append_scores(conn: &Connection, scores: Vec<i32>) -> Result<()> {
 ///     conn.execute_batch("CREATE TABLE scores (a INTEGER, b INTEGER, c INTEGER)")?;

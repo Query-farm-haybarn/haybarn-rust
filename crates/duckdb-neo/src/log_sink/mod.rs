@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use duckdb_loadable_macros::AsRaw;
+use haybarn_loadable_macros::AsRaw;
 
 use crate::Error;
 use crate::builder_helpers::{OpaqueHandle, handle_unwind};
@@ -17,7 +17,7 @@ use crate::{
 /// The ids attached to one log record, valid only during [`LogSinkCallbacks::write`].
 ///
 /// ```compile_fail
-/// # use duckdb_neo::log_sink::LogMetadata;
+/// # use haybarn_neo::log_sink::LogMetadata;
 /// fn keep(metadata: LogMetadata<'_>) -> LogMetadata<'static> {
 ///     metadata
 /// }

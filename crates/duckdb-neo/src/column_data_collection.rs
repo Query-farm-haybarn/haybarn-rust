@@ -130,9 +130,9 @@ impl<S: Into<String> + Clone, const N: usize> From<&[(LogicalType, S); N]> for C
 /// [`ReplacementScanBuilder::collection`](crate::replacement_scan::ReplacementScanBuilder::collection).
 ///
 /// ```compile_fail,E0597
-/// # use duckdb_neo::{DuckDBType, environment::{Environment, StorageLocation}};
-/// # use duckdb_neo::column_data_collection::ColumnDataCollection;
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # use haybarn_neo::{DuckDBType, environment::{Environment, StorageLocation}};
+/// # use haybarn_neo::column_data_collection::ColumnDataCollection;
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let instance = Environment::new()?.open(StorageLocation::InMemory)?;
 /// let collection = {
 ///     let conn = instance.connect()?;
@@ -144,11 +144,11 @@ impl<S: Into<String> + Clone, const N: usize> From<&[(LogicalType, S); N]> for C
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{DuckDBType, environment::{Environment, StorageLocation}};
-/// use duckdb_neo::column_data_collection::ColumnDataCollection;
-/// use duckdb_neo::data_chunk::DataChunk;
+/// use haybarn_neo::{DuckDBType, environment::{Environment, StorageLocation}};
+/// use haybarn_neo::column_data_collection::ColumnDataCollection;
+/// use haybarn_neo::data_chunk::DataChunk;
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 /// let conn = instance.connect()?;
@@ -260,9 +260,9 @@ impl<'conn> ColumnDataCollection<'conn> {
     /// collection must outlive the scan.
     ///
     /// ```compile_fail,E0597
-    /// # use duckdb_neo::{DuckDBType, environment::{Environment, StorageLocation}};
-    /// # use duckdb_neo::column_data_collection::ColumnDataCollection;
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::{DuckDBType, environment::{Environment, StorageLocation}};
+    /// # use haybarn_neo::column_data_collection::ColumnDataCollection;
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
     /// let scan = {
     ///     let collection = ColumnDataCollection::new(&conn, [i32::logical_type(&conn)?])?;
@@ -322,9 +322,9 @@ impl<'conn> ColumnDataCollectionScan<'conn> {
     /// The chunk borrows the scan, so it cannot outlive it:
     ///
     /// ```compile_fail
-    /// # use duckdb_neo::{DuckDBType, environment::{Environment, StorageLocation}};
-    /// # use duckdb_neo::column_data_collection::ColumnDataCollection;
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::{DuckDBType, environment::{Environment, StorageLocation}};
+    /// # use haybarn_neo::column_data_collection::ColumnDataCollection;
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// # let instance = Environment::new()?.open(StorageLocation::InMemory)?;
     /// # let conn = instance.connect()?;
     /// # let collection = ColumnDataCollection::new(&conn, [i32::logical_type(&conn)?])?;

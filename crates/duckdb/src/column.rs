@@ -55,7 +55,7 @@ impl Statement<'_> {
     /// # Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn get_column_count(conn: &Connection) -> Result<usize> {
     ///     let stmt = conn.prepare("SELECT id, name FROM people")?;
     ///     Ok(stmt.column_count())
@@ -74,7 +74,7 @@ impl Statement<'_> {
     /// (because of schema change) when `query_row` is called. So we assert
     /// that a compilation error happens if this reference is kept alive:
     /// ```compile_fail
-    /// use duckdb::{Connection, Result};
+    /// use haybarn::{Connection, Result};
     /// fn main() -> Result<()> {
     ///     let db = Connection::open_in_memory()?;
     ///     let mut stmt = db.prepare("SELECT 1 as x")?;

@@ -11,12 +11,12 @@
 //! # Example
 //!
 //! ```
-//! use duckdb_neo::{
+//! use haybarn_neo::{
 //!     Parameters,
 //!     environment::{Environment, StorageLocation},
 //! };
 //!
-//! # fn main() -> duckdb_neo::Result<()> {
+//! # fn main() -> haybarn_neo::Result<()> {
 //! let environment = Environment::new()?;
 //! let instance = environment.open(StorageLocation::InMemory)?;
 //! let connection = instance.connect()?;
@@ -34,8 +34,8 @@
 #[doc = include_str!("../README.md")]
 struct ReadmeDoctests;
 
-// Lets the raw handle derives name `::duckdb_neo` inside this crate.
-extern crate self as duckdb_neo;
+// Lets the raw handle derives name `::haybarn_neo` inside this crate.
+extern crate self as haybarn_neo;
 
 mod builder_helpers;
 mod handles;
@@ -90,18 +90,18 @@ pub mod vector;
 
 use crate::error::{check_api_call, check_api_call_string};
 use connection::Factory;
-pub use libduckdb_sys::v2 as ffi;
+pub use libhaybarn_sys::v2 as ffi;
 
-pub(crate) use duckdb_loadable_macros::DropHandle;
-pub use duckdb_loadable_macros::{AsRaw, FromRaw};
 pub use error::Error;
+pub(crate) use haybarn_loadable_macros::DropHandle;
+pub use haybarn_loadable_macros::{AsRaw, FromRaw};
 pub use parameter::{Parameters, QueryParameter};
 pub use raw::{AsRaw, FromRaw};
 pub use types::{DuckDBType, FromValue, ToValue};
 
 /// This result type is used extensively throughout the crate to represent the result of (FFI) operations that can fail.
 ///
-///     let result: duckdb_neo::Result<()> = Err(duckdb_neo::Error::invalid_input("invalid"));
+///     let result: haybarn_neo::Result<()> = Err(haybarn_neo::Error::invalid_input("invalid"));
 ///     assert!(result.is_err());
 pub type Result<T> = std::result::Result<T, Error>;
 

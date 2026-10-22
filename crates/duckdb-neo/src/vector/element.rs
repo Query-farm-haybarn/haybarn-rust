@@ -17,7 +17,7 @@ use crate::{
 /// A safe implementation is rejected:
 ///
 /// ```compile_fail,E0200
-/// # use duckdb_neo::{logical_type::LogicalTypeID, vector::{VectorReader, VectorElement}};
+/// # use haybarn_neo::{logical_type::LogicalTypeID, vector::{VectorReader, VectorElement}};
 /// struct Wide([u64; 4]);
 ///
 /// impl VectorElement for Wide {
@@ -63,7 +63,7 @@ pub unsafe trait VectorElement: Sized {
     /// - `logical` must be a row of `reader`, `physical` its physical index, and the row must not be `NULL`.
     ///
     /// ```compile_fail,E0133
-    /// # use duckdb_neo::vector::{Vector, VectorElement};
+    /// # use haybarn_neo::vector::{Vector, VectorElement};
     /// fn read<'a>(vector: &'a Vector<'_, i8>) -> &'a i64 {
     ///     let reader = vector.reader().unwrap();
     ///     <i64 as VectorElement>::get(&reader, 10_000, 0)
@@ -83,9 +83,9 @@ pub unsafe trait VectorElement: Sized {
 /// Non-byte vectors do not expose an arena:
 ///
 /// ```compile_fail,E0599
-/// use duckdb_neo::vector::Vector;
+/// use haybarn_neo::vector::Vector;
 ///
-/// fn arena(vector: &mut Vector<'_, i32>) -> duckdb_neo::Result<()> {
+/// fn arena(vector: &mut Vector<'_, i32>) -> haybarn_neo::Result<()> {
 ///     let _ = vector.writer()?.arena();
 ///     Ok(())
 /// }
@@ -119,8 +119,8 @@ pub unsafe trait WritableVectorElement: VectorElement {
     /// - `index` must be less than [`VectorWriter::len`].
     ///
     /// ```compile_fail,E0133
-    /// # use duckdb_neo::vector::{Vector, WritableVectorElement};
-    /// fn write(vector: &mut Vector<'_, i32>) -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::vector::{Vector, WritableVectorElement};
+    /// fn write(vector: &mut Vector<'_, i32>) -> haybarn_neo::Result<()> {
     ///     <i32 as WritableVectorElement>::write(&mut vector.writer()?, 0, Some(1))
     /// }
     /// ```

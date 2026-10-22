@@ -1,6 +1,6 @@
 // Basic example copy from README
 
-use duckdb::{
+use haybarn::{
     Connection, Result,
     arrow::{record_batch::RecordBatch, util::pretty::print_batches},
     params,

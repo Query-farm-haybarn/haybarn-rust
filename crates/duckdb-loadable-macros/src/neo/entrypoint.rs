@@ -51,15 +51,15 @@ pub fn parse(meta: TokenStream, ast: Item) -> Result<TokenStream> {
         /// Only DuckDB may call this, with its own entrypoint input.
         #[unsafe(no_mangle)]
         #[allow(clippy::useless_conversion)]
-        pub unsafe extern "C" fn #c_entrypoint(input: *mut ::duckdb_neo::ffi::duckdb_v2_extension_input) {
+        pub unsafe extern "C" fn #c_entrypoint(input: *mut ::haybarn_neo::ffi::duckdb_v2_extension_input) {
             unsafe {
-                ::duckdb_neo::extension::run_extension_entrypoint(input, #version, |extension| {
+                ::haybarn_neo::extension::run_extension_entrypoint(input, #version, |extension| {
                     #func_ident(extension).map_err(::std::convert::Into::into)
                 })
             }
         }
 
-        ::duckdb_neo::__describe_static_extension!(#describe, #c_entrypoint, #extension_name, #version);
+        ::haybarn_neo::__describe_static_extension!(#describe, #c_entrypoint, #extension_name, #version);
 
         #func
     })

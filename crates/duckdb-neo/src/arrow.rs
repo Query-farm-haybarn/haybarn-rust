@@ -327,7 +327,7 @@ mod tests {
     use std::mem::transmute;
 
     use arrow_array::ffi::FFI_ArrowSchema;
-    use libduckdb_sys::v2 as ffi;
+    use libhaybarn_sys::v2 as ffi;
 
     use crate::{
         Parameters,

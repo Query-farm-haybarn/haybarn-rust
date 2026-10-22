@@ -1,12 +1,12 @@
 [package]
-name = "duckdb-neo"
-description = "Ergonomic wrapper for DuckDB's v2 C API (experimental)"
+name = "haybarn-neo"
+description = "Ergonomic wrapper for the Haybarn engine's v2 C API (powered by DuckDB; experimental)"
 version = "0.20000.0"
 authors = { workspace = true }
 license = { workspace = true }
 repository = { workspace = true }
 homepage = { workspace = true }
-documentation = "https://docs.rs/duckdb-neo/"
+documentation = "https://docs.rs/haybarn-neo/"
 categories = { workspace = true }
 keywords = { workspace = true }
 readme = "README.md"
@@ -14,7 +14,7 @@ edition = { workspace = true }
 rust-version = { workspace = true }
 
 [lib]
-name = "duckdb_neo"
+name = "haybarn_neo"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(coverage_nightly)'] }
@@ -29,33 +29,33 @@ rust_decimal = ["dep:rust_decimal"]
 
 # Buildtime features
 # Where to find a prebuilt libduckdb. Not needed with `bundled`; opt out with `default-features = false`.
-buildtime-download = ["libduckdb-sys/download-lib"]
-buildtime-pkg-config = ["libduckdb-sys/pkg-config"]
+buildtime-download = ["libhaybarn-sys/download-lib"]
+buildtime-pkg-config = ["libhaybarn-sys/pkg-config"]
 
 # Compatibility marker only; pregenerated bindings are used without `buildtime-bindgen`.
 buildtime-pregenerated = []
 # Needs libclang and duckdb_v2.h (see DUCKDB_INCLUDE_DIR).
-buildtime-bindgen = ["libduckdb-sys/buildtime_bindgen"]
+buildtime-bindgen = ["libhaybarn-sys/buildtime_bindgen"]
 
-bundled = ["libduckdb-sys/bundled"]
-bundled-json = ["bundled", "libduckdb-sys/json"]
-bundled-parquet = ["bundled", "libduckdb-sys/parquet"]
+bundled = ["libhaybarn-sys/bundled"]
+bundled-json = ["bundled", "libhaybarn-sys/json"]
+bundled-parquet = ["bundled", "libhaybarn-sys/parquet"]
 
-bundled-cmake = ["bundled", "libduckdb-sys/bundled-cmake"]
+bundled-cmake = ["bundled", "libhaybarn-sys/bundled-cmake"]
 # Extensions statically linked through the CMake build backend.
-bundled-cmake-autocomplete = ["bundled-cmake", "libduckdb-sys/autocomplete"]
-bundled-cmake-httpfs = ["bundled-cmake", "libduckdb-sys/httpfs"]
-bundled-cmake-icu = ["bundled-cmake", "libduckdb-sys/icu"]
-bundled-cmake-tpcds = ["bundled-cmake", "libduckdb-sys/tpcds"]
-bundled-cmake-tpch = ["bundled-cmake", "libduckdb-sys/tpch"]
+bundled-cmake-autocomplete = ["bundled-cmake", "libhaybarn-sys/autocomplete"]
+bundled-cmake-httpfs = ["bundled-cmake", "libhaybarn-sys/httpfs"]
+bundled-cmake-icu = ["bundled-cmake", "libhaybarn-sys/icu"]
+bundled-cmake-tpcds = ["bundled-cmake", "libhaybarn-sys/tpcds"]
+bundled-cmake-tpch = ["bundled-cmake", "libhaybarn-sys/tpch"]
 
-build-extension = ["libduckdb-sys/loadable-extension-v2"]
+build-extension = ["libhaybarn-sys/loadable-extension-v2"]
 build-extension-static = []
 
 [dependencies]
 chrono = { workspace = true, optional = true }
-duckdb-loadable-macros = { workspace = true, features = ["neo"] }
-libduckdb-sys = { workspace = true, features = ["capi-v2"] }
+haybarn-loadable-macros = { workspace = true, features = ["neo"] }
+libhaybarn-sys = { workspace = true, features = ["capi-v2"] }
 paste = { workspace = true }
 r2d2 = { workspace = true, optional = true }
 rust_decimal = { workspace = true, optional = true }

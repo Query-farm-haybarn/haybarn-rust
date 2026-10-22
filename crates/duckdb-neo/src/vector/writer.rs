@@ -14,7 +14,7 @@ use super::{
 /// Resize the vector before acquiring its writer:
 ///
 /// ```
-/// # use duckdb_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
+/// # use haybarn_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
 /// # fn main() -> Result<()> {
 /// # let env = Environment::new()?;
 /// # let conn = env.open(StorageLocation::InMemory)?.connect()?;
@@ -41,7 +41,7 @@ use super::{
 /// The vector cannot be resized while its writer is in use:
 ///
 /// ```compile_fail,E0499
-/// use duckdb_neo::{Result, vector::Vector};
+/// use haybarn_neo::{Result, vector::Vector};
 ///
 /// fn resize(vector: &mut Vector<'_, i32>) -> Result<()> {
 ///     let mut writer = vector.writer()?;
@@ -103,7 +103,7 @@ impl<'writer, 'chunk, T: VectorElement> VectorWriter<'writer, 'chunk, T> {
     /// and any referenced storage must outlive all reads from the vector.
     ///
     /// ```compile_fail,E0499
-    /// use duckdb_neo::{Result, vector::Vector};
+    /// use haybarn_neo::{Result, vector::Vector};
     ///
     /// fn overwrite(vector: &mut Vector<'_, i32>) -> Result<()> {
     ///     let mut writer = vector.writer()?;
@@ -142,7 +142,7 @@ impl<'writer, 'chunk, T: VectorElement> VectorWriter<'writer, 'chunk, T> {
     /// A borrowed mask cannot survive a typed write that might replace it:
     ///
     /// ```compile_fail,E0499
-    /// use duckdb_neo::{Result, vector::Vector};
+    /// use haybarn_neo::{Result, vector::Vector};
     ///
     /// fn overwrite(vector: &mut Vector<'_, i32>) -> Result<()> {
     ///     let mut writer = vector.writer()?;
@@ -155,7 +155,7 @@ impl<'writer, 'chunk, T: VectorElement> VectorWriter<'writer, 'chunk, T> {
     /// ```
     ///
     /// ```compile_fail,E0133
-    /// use duckdb_neo::{Result, vector::Vector};
+    /// use haybarn_neo::{Result, vector::Vector};
     ///
     /// fn validity(vector: &mut Vector<'_, i32>) -> Result<()> {
     ///     vector.writer()?.validity_mut()?;
@@ -290,7 +290,7 @@ impl<T: HasDuckDBBytes> VectorWriter<'_, '_, T> {
     /// Take [`Self::as_mut_ptr`] before borrowing the arena to fill data slots.
     ///
     /// ```compile_fail,E0599
-    /// use duckdb_neo::{Result, vector::Vector};
+    /// use haybarn_neo::{Result, vector::Vector};
     ///
     /// fn arena(vector: &mut Vector<'_, i32>) -> Result<()> {
     ///     let mut writer = vector.writer()?;

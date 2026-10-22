@@ -36,8 +36,8 @@ use sealed::Sealed;
 /// parameters is known at compile time, this can be done in one of the
 /// following ways:
 ///
-/// - Using the [`duckdb::params!`](crate::params!) macro, e.g.
-///   `thing.query(duckdb::params![1, "foo", bar])`. This is mostly useful for
+/// - Using the [`haybarn::params!`](crate::params!) macro, e.g.
+///   `thing.query(haybarn::params![1, "foo", bar])`. This is mostly useful for
 ///   heterogeneous lists of parameters, or lists where the number of parameters
 ///   exceeds 32.
 ///
@@ -52,7 +52,7 @@ use sealed::Sealed;
 ///       (Note: in this case we don't implement this for slices for coherence
 ///       reasons, so it really is only for the "reference to array" types —
 ///       hence why the number of parameters must be <= 32 or you need to
-///       reach for `duckdb::params!`)
+///       reach for `haybarn::params!`)
 ///
 ///     - a tuple of mixed types (up to 16 elements), as in
 ///       `thing.execute((1i32, "foo", 3.14f64))`. This is the most ergonomic
@@ -70,11 +70,11 @@ use sealed::Sealed;
 /// ### Example (positional)
 ///
 /// ```rust,no_run
-/// # use duckdb::{Connection, Result, params};
+/// # use haybarn::{Connection, Result, params};
 /// fn update_rows(conn: &Connection) -> Result<()> {
 ///     let mut stmt = conn.prepare("INSERT INTO test (a, b) VALUES (?, ?)")?;
 ///
-///     // Using `duckdb::params!`:
+///     // Using `haybarn::params!`:
 ///     stmt.execute(params![1i32, "blah"])?;
 ///
 ///     // array literal — non-references
@@ -100,7 +100,7 @@ use sealed::Sealed;
 ///
 /// ## Named parameters
 ///
-/// Named parameters can be passed using [`duckdb::named_params!`](crate::named_params!)
+/// Named parameters can be passed using [`haybarn::named_params!`](crate::named_params!)
 /// or a manually constructed `&[(&str, &dyn ToSql)]` for heterogeneous values,
 /// or as any `HashMap` whose keys borrow as `str` and whose values implement a
 /// single concrete [`ToSql`] type, including maps with custom hashers. The keys
@@ -117,7 +117,7 @@ use sealed::Sealed;
 ///
 /// ```rust,no_run
 /// use std::collections::HashMap;
-/// use duckdb::{Connection, Result};
+/// use haybarn::{Connection, Result};
 ///
 /// fn execute_query(conn: &Connection) -> Result<Vec<String>> {
 ///     let params = HashMap::from([("min", 23), ("max", 42)]);
@@ -130,7 +130,7 @@ use sealed::Sealed;
 /// ### Example (named parameters with mixed types)
 ///
 /// ```rust,no_run
-/// use duckdb::{Connection, Result, named_params};
+/// use haybarn::{Connection, Result, named_params};
 ///
 /// fn execute_query(conn: &Connection, min_age: i32, name: &str) -> Result<bool> {
 ///     conn.query_row(
@@ -151,7 +151,7 @@ use sealed::Sealed;
 /// ### Example (no parameters)
 ///
 /// ```rust,no_run
-/// # use duckdb::{Connection, Result, params};
+/// # use haybarn::{Connection, Result, params};
 /// fn delete_all_users(conn: &Connection) -> Result<()> {
 ///     // Empty array:
 ///     conn.execute("DELETE FROM users", [])?;
@@ -296,7 +296,7 @@ impl_params_for_tuple!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T
 /// ## Basic usage
 ///
 /// ```rust,no_run
-/// use duckdb::{Connection, Result, params_from_iter};
+/// use haybarn::{Connection, Result, params_from_iter};
 /// use std::collections::BTreeSet;
 ///
 /// fn query(conn: &Connection, ids: &BTreeSet<String>) -> Result<()> {
@@ -316,7 +316,7 @@ impl_params_for_tuple!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T
 /// dynamic number of parameters.
 ///
 /// ```rust,no_run
-/// use duckdb::{Connection, Result};
+/// use haybarn::{Connection, Result};
 ///
 /// pub fn any_active_users(conn: &Connection, usernames: &[String]) -> Result<bool> {
 ///     if usernames.is_empty() {
@@ -333,7 +333,7 @@ impl_params_for_tuple!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T
 ///         vars,
 ///     );
 ///     let mut stmt = conn.prepare(&sql)?;
-///     stmt.exists(duckdb::params_from_iter(usernames))
+///     stmt.exists(haybarn::params_from_iter(usernames))
 /// }
 ///
 /// // Helper function to return a comma-separated sequence of `?`.

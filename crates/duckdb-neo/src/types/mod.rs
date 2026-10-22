@@ -20,7 +20,7 @@
 //! iterator, and writer types of nested families, are re-exported below.
 //!
 //! ```
-//! use duckdb_neo::types::{
+//! use haybarn_neo::types::{
 //!     ArrayIterator, ArrayRef, ListIterator, ListRef, MapRow, StructRow, StructWrite, UnionRow, UnionWriter,
 //! };
 //!

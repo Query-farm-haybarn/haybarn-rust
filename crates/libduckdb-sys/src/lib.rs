@@ -5,7 +5,7 @@
 #![allow(improper_ctypes)]
 
 #[cfg(not(any(feature = "capi-v1", feature = "capi-v2")))]
-compile_error!("libduckdb-sys needs at least one of the `capi-v1` or `capi-v2` features");
+compile_error!("libhaybarn-sys needs at least one of the `capi-v1` or `capi-v2` features");
 
 /// Dependency-free Arrow C Data Interface structs used by DuckDB Arrow APIs.
 mod arrow_c_data;

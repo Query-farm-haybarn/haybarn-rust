@@ -9,7 +9,7 @@
 //! does not carry to other connections to the same database.
 //!
 //! ```rust,no_run
-//! # use duckdb::{Connection, Result};
+//! # use haybarn::{Connection, Result};
 //! # fn main() -> Result<()> {
 //! let conn = Connection::open_in_memory()?;
 //! conn.set_query_progress_tracking(true)?;

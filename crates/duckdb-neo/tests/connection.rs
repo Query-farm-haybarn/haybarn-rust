@@ -1,12 +1,12 @@
 use std::thread;
 
-use duckdb_neo::{
+use haybarn_neo::{
     Parameters,
     environment::{Environment, StorageLocation},
 };
 
 #[test]
-fn test_send_between_threads() -> duckdb_neo::Result<()> {
+fn test_send_between_threads() -> haybarn_neo::Result<()> {
     let connection = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 
     let connection = thread::spawn(move || {
@@ -43,8 +43,8 @@ fn test_send_between_threads() -> duckdb_neo::Result<()> {
 }
 
 #[test]
-fn test_handles_do_not_keep_connection_open() -> duckdb_neo::Result<()> {
-    use duckdb_neo::query_progress::QueryProgressTracker;
+fn test_handles_do_not_keep_connection_open() -> haybarn_neo::Result<()> {
+    use haybarn_neo::query_progress::QueryProgressTracker;
 
     let instance = Environment::new()?.open(StorageLocation::InMemory)?;
     let other = instance.connect()?;

@@ -15,9 +15,9 @@ use crate::{
 /// Raw construction also requires an explicit lifetime guarantee:
 ///
 /// ```compile_fail,E0133
-/// use duckdb_neo::vector::{Arena, DuckDBBytes};
+/// use haybarn_neo::vector::{Arena, DuckDBBytes};
 ///
-/// fn encode(arena: &Arena) -> duckdb_neo::Result<DuckDBBytes> {
+/// fn encode(arena: &Arena) -> haybarn_neo::Result<DuckDBBytes> {
 ///     DuckDBBytes::new(arena, b"value")
 /// }
 /// ```

@@ -14,7 +14,7 @@ impl Appender<'_> {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result, params};
+    /// # use haybarn::{Connection, Result, params};
     ///   use arrow::record_batch::RecordBatch;
     /// fn insert_record_batch(conn: &Connection,record_batch:RecordBatch) -> Result<()> {
     ///     let mut app = conn.appender("foo")?;

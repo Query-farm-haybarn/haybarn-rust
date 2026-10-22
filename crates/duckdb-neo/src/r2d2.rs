@@ -4,7 +4,7 @@
 //! Use [`r2d2::CustomizeConnection`] to initialize new connections; clean up before returning them.
 //!
 //! ```
-//! use duckdb_neo::{environment::{Environment, StorageLocation}, r2d2::ConnectionManager, Parameters};
+//! use haybarn_neo::{environment::{Environment, StorageLocation}, r2d2::ConnectionManager, Parameters};
 //!
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //! let env = Environment::new()?;

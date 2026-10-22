@@ -23,8 +23,8 @@
 //! narrowed to its logical type before reading:
 //!
 //! ```
-//! # use duckdb_neo::{environment::{Environment, StorageLocation}, Parameters};
-//! # fn main() -> duckdb_neo::Result<()> {
+//! # use haybarn_neo::{environment::{Environment, StorageLocation}, Parameters};
+//! # fn main() -> haybarn_neo::Result<()> {
 //! # let env = Environment::new()?;
 //! # let conn = env.open(StorageLocation::InMemory)?.connect()?;
 //! # let mut result = conn.query("SELECT 1::INTEGER", Parameters::None)?;
@@ -59,8 +59,8 @@ use crate::{
 };
 
 mod element;
-use duckdb_loadable_macros::{AsRaw, FromRaw};
 pub use element::*;
+use haybarn_loadable_macros::{AsRaw, FromRaw};
 
 /// Logical-type parameters read once per vector, so row access skips the FFI lookup.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -208,7 +208,7 @@ pub(crate) enum Access {
 /// Read rows through [`Self::reader`] and write them through [`Self::writer`].
 ///
 /// ```compile_fail,E0599
-/// use duckdb_neo::vector::Vector;
+/// use haybarn_neo::vector::Vector;
 ///
 /// fn read(vector: &Vector<'_, i32>) {
 ///     let _ = vector.get(0);
@@ -216,7 +216,7 @@ pub(crate) enum Access {
 /// ```
 ///
 /// ```compile_fail,E0599
-/// use duckdb_neo::vector::Vector;
+/// use haybarn_neo::vector::Vector;
 ///
 /// fn write(vector: &mut Vector<'_, i32>) {
 ///     let _ = vector.write(0, Some(42));
@@ -512,8 +512,8 @@ impl<'a, T: VectorElement> Vector<'a, T> {
     /// swapped with another vector's, since readers trust their validated types:
     ///
     /// ```compile_fail,E0596
-    /// # use duckdb_neo::{DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::List};
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::{DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::List};
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// # let env = Environment::new()?;
     /// # let conn = env.open(StorageLocation::InMemory)?.connect()?;
     /// let types = [Vec::<Option<String>>::logical_type(&conn)?, Vec::<Option<i64>>::logical_type(&conn)?];

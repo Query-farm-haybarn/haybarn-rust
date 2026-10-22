@@ -12,14 +12,14 @@ use crate::{AsRaw, DropHandle, FromRaw, Result, check_api_call, logical_type::Lo
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{
+/// use haybarn_neo::{
 ///     Parameters,
 ///     environment::Environment,
 ///     environment::StorageLocation,
 /// };
-/// use duckdb_neo::logical_type::LogicalTypeID;
+/// use haybarn_neo::logical_type::LogicalTypeID;
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 /// let conn = instance.connect()?;

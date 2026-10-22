@@ -61,9 +61,9 @@ pub struct SchemaBind {
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{environment::Environment, environment::StorageLocation};
+/// use haybarn_neo::{environment::Environment, environment::StorageLocation};
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 /// let conn = instance.connect()?;

@@ -44,9 +44,9 @@ regenerate_bindings() {
     find "$CARGO_OUTPUT_DIR" -type f \( -name bindgen.rs -o -name bindgen_v2.rs \) -exec rm {} \;
     DUCKDB_LIB_DIR="$SCRIPT_DIR/duckdb" \
         DUCKDB_INCLUDE_DIR="$SCRIPT_DIR/duckdb/src/include" \
-        cargo check -p libduckdb-sys --no-default-features --features "$FEATURES"
+        cargo check -p libhaybarn-sys --no-default-features --features "$FEATURES"
 
-    BINDGEN_RS=$(find "$CARGO_OUTPUT_DIR" -path "*/libduckdb-sys-*/out/$GENERATED" -print -quit)
+    BINDGEN_RS=$(find "$CARGO_OUTPUT_DIR" -path "*/libhaybarn-sys-*/out/$GENERATED" -print -quit)
     if [ -z "$BINDGEN_RS" ]; then
         echo "ERROR: $GENERATED was not generated" >&2
         exit 1

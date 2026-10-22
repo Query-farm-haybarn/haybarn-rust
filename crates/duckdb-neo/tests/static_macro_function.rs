@@ -5,8 +5,8 @@
 
 use std::sync::OnceLock;
 
-use duckdb_loadable_macros::duckdb_entrypoint_c_api_v2;
-use duckdb_neo::{
+use haybarn_loadable_macros::duckdb_entrypoint_c_api_v2;
+use haybarn_neo::{
     DuckDBType, Parameters,
     connection::Connection,
     environment::{Environment, StorageLocation},
@@ -23,7 +23,7 @@ fn param_a() -> SignatureBuilder {
 }
 
 #[duckdb_entrypoint_c_api_v2(extension_name = "neo_static_macros", api_version = "v2.0.0")]
-fn entrypoint(extension: &Extension) -> duckdb_neo::Result<()> {
+fn entrypoint(extension: &Extension) -> haybarn_neo::Result<()> {
     MacroFunctionBuilder::new(
         "neo_add",
         param_a()
@@ -125,25 +125,25 @@ fn entrypoint(extension: &Extension) -> duckdb_neo::Result<()> {
     Ok(())
 }
 
-fn connect() -> duckdb_neo::Result<Connection> {
+fn connect() -> haybarn_neo::Result<Connection> {
     // SAFETY: the describe function comes from `#[duckdb_entrypoint_c_api_v2]`.
     unsafe { register_static_extension(duckdb_extension_neo_static_macros_describe)? };
     Environment::new()?.open(StorageLocation::InMemory)?.connect()
 }
 
-fn query_rows(connection: &Connection, sql: &str) -> duckdb_neo::Result<Vec<String>> {
+fn query_rows(connection: &Connection, sql: &str) -> haybarn_neo::Result<Vec<String>> {
     let sql = format!("SELECT COLUMNS(*)::VARCHAR FROM ({sql})");
     let mut result = connection.query(sql.as_str(), Parameters::None)?;
     let mut rows = Vec::new();
     while let Some(chunk) = result.next_chunk()? {
         let columns = (0..chunk.col_count())
             .map(|index| chunk.get_vector_at::<String>(index)?.reader())
-            .collect::<duckdb_neo::Result<Vec<_>>>()?;
+            .collect::<haybarn_neo::Result<Vec<_>>>()?;
         for row in 0..chunk.row_count()? {
             let values = columns
                 .iter()
                 .map(|column| Ok(column.get(row)?.unwrap_or("NULL").to_string()))
-                .collect::<duckdb_neo::Result<Vec<_>>>()?;
+                .collect::<haybarn_neo::Result<Vec<_>>>()?;
             rows.push(values.join("|"));
         }
     }
@@ -151,7 +151,7 @@ fn query_rows(connection: &Connection, sql: &str) -> duckdb_neo::Result<Vec<Stri
 }
 
 #[test]
-fn test_scalar_macro() -> duckdb_neo::Result<()> {
+fn test_scalar_macro() -> haybarn_neo::Result<()> {
     let connection = connect()?;
 
     assert_eq!(
@@ -182,7 +182,7 @@ fn test_scalar_macro() -> duckdb_neo::Result<()> {
 }
 
 #[test]
-fn test_table_macro() -> duckdb_neo::Result<()> {
+fn test_table_macro() -> haybarn_neo::Result<()> {
     let connection = connect()?;
 
     assert_eq!(
@@ -203,7 +203,7 @@ fn test_table_macro() -> duckdb_neo::Result<()> {
 }
 
 #[test]
-fn test_macro_catalog_entries() -> duckdb_neo::Result<()> {
+fn test_macro_catalog_entries() -> haybarn_neo::Result<()> {
     let connection = connect()?;
 
     assert_eq!(
@@ -227,7 +227,7 @@ fn test_macro_catalog_entries() -> duckdb_neo::Result<()> {
 }
 
 #[test]
-fn test_invalid_macros_are_rejected() -> duckdb_neo::Result<()> {
+fn test_invalid_macros_are_rejected() -> haybarn_neo::Result<()> {
     connect()?;
 
     let rejected = REJECTED.get().expect("the extension was loaded");

@@ -170,13 +170,13 @@ macro_rules! query_result {
             #[doc = concat!(
                 "```compile_fail,E0277\n",
                 "fn assert_send<T: Send>() {}\n",
-                "assert_send::<duckdb_neo::query_result::", stringify!($name), "<'static>>();\n",
+                "assert_send::<haybarn_neo::query_result::", stringify!($name), "<'static>>();\n",
                 "```",
             )]
             #[doc = concat!(
                 "```compile_fail,unused_must_use\n",
                 "#![deny(unused_must_use)]\n",
-                "fn discard(result: duckdb_neo::Result<duckdb_neo::query_result::", stringify!($name), "<'_>>) -> duckdb_neo::Result<()> {\n",
+                "fn discard(result: haybarn_neo::Result<haybarn_neo::query_result::", stringify!($name), "<'_>>) -> haybarn_neo::Result<()> {\n",
                 "    result?;\n",
                 "    Ok(())\n",
                 "}\n",
@@ -276,13 +276,13 @@ query_result! {
     ///
     /// # Example
     /// ```
-    /// use duckdb_neo::{
+    /// use haybarn_neo::{
     ///     Parameters,
     ///     environment::Environment,
     ///     environment::StorageLocation,
     /// };
     ///
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// let env = Environment::new()?;
     /// let instance = env.open(StorageLocation::InMemory)?;
     /// let conn = instance.connect()?;
@@ -317,13 +317,13 @@ query_result! {
     ///
     /// # Example
     /// ```
-    /// use duckdb_neo::{
+    /// use haybarn_neo::{
     ///     Parameters,
     ///     environment::Environment,
     ///     environment::StorageLocation,
     /// };
     ///
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// let env = Environment::new()?;
     /// let instance = env.open(StorageLocation::InMemory)?;
     /// let conn = instance.connect()?;
@@ -361,8 +361,8 @@ impl QueryResult<'_> {
     /// The result is consumed, also when rendering fails:
     ///
     /// ```compile_fail,E0382
-    /// # use duckdb_neo::{Parameters, environment::{Environment, StorageLocation}};
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::{Parameters, environment::{Environment, StorageLocation}};
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// # let instance = Environment::new()?.open(StorageLocation::InMemory)?;
     /// # let conn = instance.connect()?;
     /// let mut result = conn.query("SELECT 42", Parameters::None)?;
@@ -420,8 +420,8 @@ impl<'a> ArrowQueryResult<'a> {
     /// The query runs while the stream is read, so the stream borrows the connection:
     ///
     /// ```compile_fail
-    /// # use duckdb_neo::{Parameters, environment::{Environment, StorageLocation}};
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::{Parameters, environment::{Environment, StorageLocation}};
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// # let instance = Environment::new()?.open(StorageLocation::InMemory)?;
     /// let mut conn = instance.connect()?;
     /// let stream = conn.arrow_query("SELECT 42", Parameters::None, None)?.to_arrow_stream()?;
@@ -446,7 +446,7 @@ mod tests {
         ffi::FFI_ArrowSchema,
         ffi_stream::{ArrowArrayStreamReader, FFI_ArrowArrayStream},
     };
-    use libduckdb_sys::v2 as ffi;
+    use libhaybarn_sys::v2 as ffi;
 
     use crate::{
         Parameters,

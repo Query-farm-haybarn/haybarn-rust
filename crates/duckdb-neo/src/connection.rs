@@ -132,7 +132,7 @@ unsafe impl Sync for InnerConnection {}
 ///
 /// ```compile_fail,E0277
 /// fn assert_sync<T: Sync>() {}
-/// assert_sync::<duckdb_neo::connection::Factory>();
+/// assert_sync::<haybarn_neo::connection::Factory>();
 /// ```
 #[derive(Debug, AsRaw, FromRaw)]
 pub struct Factory {
@@ -181,7 +181,7 @@ impl<T: HasFactory + ?Sized> HasFactory for &T {
 ///
 /// ```compile_fail,E0277
 /// fn assert_sync<T: Sync>() {}
-/// assert_sync::<duckdb_neo::connection::Connection>();
+/// assert_sync::<haybarn_neo::connection::Connection>();
 /// ```
 #[derive(Debug)]
 pub struct Connection {

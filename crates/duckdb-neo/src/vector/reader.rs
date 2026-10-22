@@ -42,7 +42,7 @@ impl Selection<'_> {
 /// The vector cannot be reshaped while its reader is in use:
 ///
 /// ```compile_fail,E0502
-/// use duckdb_neo::{Result, vector::Vector};
+/// use haybarn_neo::{Result, vector::Vector};
 ///
 /// fn resize(vector: &mut Vector<'_, i32>) -> Result<()> {
 ///     let reader = vector.reader()?;
@@ -55,7 +55,7 @@ impl Selection<'_> {
 /// Values borrowed through a temporary reader also prevent mutation:
 ///
 /// ```compile_fail,E0502
-/// use duckdb_neo::{Result, vector::Vector};
+/// use haybarn_neo::{Result, vector::Vector};
 ///
 /// fn overwrite(vector: &mut Vector<'_, i32>) -> Result<()> {
 ///     let value = vector.reader()?.get(0)?;
@@ -219,7 +219,7 @@ impl<'vec, T: VectorElement> VectorReader<'vec, T> {
     /// and unselected slots. Use [`Self::as_ptr`] to read only known-valid slots.
     ///
     /// ```compile_fail,E0133
-    /// use duckdb_neo::vector::VectorReader;
+    /// use haybarn_neo::vector::VectorReader;
     ///
     /// fn read(reader: &VectorReader<'_, i32>) {
     ///     let _ = reader.as_slice();
@@ -239,7 +239,7 @@ impl<'vec, T: VectorElement> VectorReader<'vec, T> {
     /// Borrowed masks keep the vector immutable, even after the reader is gone:
     ///
     /// ```compile_fail,E0502
-    /// use duckdb_neo::{Result, vector::Vector};
+    /// use haybarn_neo::{Result, vector::Vector};
     ///
     /// fn overwrite(vector: &mut Vector<'_, i32>) -> Result<()> {
     ///     let mask = vector.reader()?.validity();

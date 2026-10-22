@@ -3,8 +3,8 @@
 //! The registration is process-wide, so every instance opened by this binary loads the extension.
 #![cfg(feature = "build-extension-static")]
 
-use duckdb_loadable_macros::duckdb_entrypoint_c_api_v2;
-use duckdb_neo::{
+use haybarn_loadable_macros::duckdb_entrypoint_c_api_v2;
+use haybarn_neo::{
     DuckDBType, Parameters,
     connection::{Connection, Context},
     data_chunk::VectorCollection,
@@ -28,7 +28,7 @@ impl ScalarCallbacks for TimesTen {
         _context: &Context,
         vectors: &mut VectorCollection,
         output: Vector<'_, Unknown>,
-    ) -> duckdb_neo::Result<()> {
+    ) -> haybarn_neo::Result<()> {
         let input = vectors.get_vector_at::<i32>(0)?.reader()?;
         let mut output = output.cast::<i32>()?;
         output.set_size(input.len())?;
@@ -41,7 +41,7 @@ impl ScalarCallbacks for TimesTen {
 }
 
 #[duckdb_entrypoint_c_api_v2(extension_name = "neo_static_demo", api_version = "v2.0.0")]
-fn entrypoint(extension: &Extension) -> duckdb_neo::Result<()> {
+fn entrypoint(extension: &Extension) -> haybarn_neo::Result<()> {
     ScalarFunctionBuilder::new(
         "neo_static_times_ten",
         SignatureBuilder::new()
@@ -52,20 +52,20 @@ fn entrypoint(extension: &Extension) -> duckdb_neo::Result<()> {
     .register(extension)
 }
 
-fn connect() -> duckdb_neo::Result<Connection> {
+fn connect() -> haybarn_neo::Result<Connection> {
     // SAFETY: the describe function comes from `#[duckdb_entrypoint_c_api_v2]`.
     unsafe { register_static_extension(duckdb_extension_neo_static_demo_describe)? };
     Environment::new()?.open(StorageLocation::InMemory)?.connect()
 }
 
-fn query_string(connection: &Connection, sql: &str) -> duckdb_neo::Result<Option<String>> {
+fn query_string(connection: &Connection, sql: &str) -> haybarn_neo::Result<Option<String>> {
     let mut result = connection.query(sql, Parameters::None)?;
     let chunk = result.next_chunk()?.expect("query should return a chunk");
     Ok(chunk.get_vector_at::<String>(0)?.reader()?.get(0)?.map(str::to_owned))
 }
 
 #[test]
-fn test_static_extension_loads_at_startup() -> duckdb_neo::Result<()> {
+fn test_static_extension_loads_at_startup() -> haybarn_neo::Result<()> {
     let connection = connect()?;
 
     let mut result = connection.query("SELECT neo_static_times_ten(4)", Parameters::None)?;
@@ -87,7 +87,7 @@ fn test_static_extension_loads_at_startup() -> duckdb_neo::Result<()> {
 }
 
 #[test]
-fn test_static_extension_load_resolves_to_linked() -> duckdb_neo::Result<()> {
+fn test_static_extension_load_resolves_to_linked() -> haybarn_neo::Result<()> {
     let connection = connect()?;
     // Already loaded at startup, and must not go looking for a file.
     connection.execute("LOAD neo_static_demo", Parameters::None)?;
@@ -95,7 +95,7 @@ fn test_static_extension_load_resolves_to_linked() -> duckdb_neo::Result<()> {
 }
 
 #[test]
-fn test_static_extension_registers_once() -> duckdb_neo::Result<()> {
+fn test_static_extension_registers_once() -> haybarn_neo::Result<()> {
     // Registering the same describe function again is a no-op, not a duplicate.
     connect()?;
     connect()?;

@@ -165,7 +165,7 @@ impl VTab for ArrowVTab {
 /// Registrations must not be passed by value:
 ///
 /// ```compile_fail,E0277
-/// use duckdb::{Statement, vtab::arrow::ArrowBatchRegistration};
+/// use haybarn::{Statement, vtab::arrow::ArrowBatchRegistration};
 ///
 /// fn query_with_owned_registration(
 ///     statement: &mut Statement<'_>,

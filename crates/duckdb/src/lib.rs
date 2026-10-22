@@ -2,9 +2,9 @@
 //! expose an interface similar to [rusqlite](https://github.com/rusqlite/rusqlite).
 //!
 //! ```rust
-//! use duckdb::{params, Connection, Result};
-//! use duckdb::arrow::record_batch::RecordBatch;
-//! use duckdb::arrow::util::pretty::print_batches;
+//! use haybarn::{params, Connection, Result};
+//! use haybarn::arrow::record_batch::RecordBatch;
+//! use haybarn::arrow::util::pretty::print_batches;
 //!
 //! #[derive(Debug)]
 //! struct Person {
@@ -55,7 +55,7 @@
 //! ```
 #![warn(missing_docs)]
 
-pub use libduckdb_sys::v1 as ffi;
+pub use libhaybarn_sys::v1 as ffi;
 
 use std::{
     cell::RefCell,
@@ -93,7 +93,7 @@ pub use polars_dataframe::Polars;
 // re-export dependencies to minimise version maintenance for crate users
 pub use arrow;
 #[cfg(feature = "loadable-extension")]
-pub use duckdb_loadable_macros::duckdb_entrypoint_c_api;
+pub use haybarn_loadable_macros::duckdb_entrypoint_c_api;
 #[cfg(feature = "polars")]
 pub use polars;
 
@@ -159,7 +159,7 @@ const STATEMENT_CACHE_DEFAULT_CAPACITY: usize = 16;
 /// # Example
 ///
 /// ```rust,no_run
-/// # use duckdb::{Result, Connection, params};
+/// # use haybarn::{Result, Connection, params};
 ///
 /// struct Person {
 ///     name: String,
@@ -197,7 +197,7 @@ macro_rules! params {
 /// # Example
 ///
 /// ```rust,no_run
-/// # use duckdb::{Connection, Result, named_params};
+/// # use haybarn::{Connection, Result, named_params};
 /// fn find(conn: &Connection, min_age: i32, name: &str) -> Result<bool> {
 ///     conn.query_row(
 ///         "SELECT $age >= 18 AND $name = 'Alice'",
@@ -215,8 +215,8 @@ macro_rules! params {
 /// Write the SQL placeholder as `$names`, with no parentheses around it.
 ///
 /// ```rust
-/// use duckdb::types::Value;
-/// use duckdb::{Connection, Result, named_params};
+/// use haybarn::types::Value;
+/// use haybarn::{Connection, Result, named_params};
 ///
 /// fn main() -> Result<()> {
 ///     let conn = Connection::open_in_memory()?;
@@ -310,7 +310,7 @@ impl Connection {
     /// Config::default())`.
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn open_my_db() -> Result<()> {
     ///     let path = "./my_db.db3";
     ///     let db = Connection::open(&path)?;
@@ -400,7 +400,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn create_tables(conn: &Connection) -> Result<()> {
     ///     conn.execute_batch("BEGIN;
     ///                         CREATE TABLE foo(x INTEGER);
@@ -428,7 +428,7 @@ impl Connection {
     /// ### With params
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection};
+    /// # use haybarn::{Connection};
     /// fn update_rows(conn: &Connection) {
     ///     match conn.execute("UPDATE foo SET bar = 'baz' WHERE qux = ?", [1i32]) {
     ///         Ok(updated) => println!("{} rows were updated", updated),
@@ -440,7 +440,7 @@ impl Connection {
     /// ### With params of varying types
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, params};
+    /// # use haybarn::{Connection, params};
     /// fn update_rows(conn: &Connection) {
     ///     match conn.execute("UPDATE foo SET bar = ? WHERE qux = ?", params![&"baz", 1i32]) {
     ///         Ok(updated) => println!("{} rows were updated", updated),
@@ -470,7 +470,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Result, Connection};
+    /// # use haybarn::{Result, Connection};
     /// fn preferred_locale(conn: &Connection) -> Result<String> {
     ///     conn.query_row(
     ///         "SELECT value FROM preferences WHERE name='locale'",
@@ -508,7 +508,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Result, Connection};
+    /// # use haybarn::{Result, Connection};
     /// fn preferred_locale(conn: &Connection) -> Result<String> {
     ///     conn.query_row_and_then(
     ///         "SELECT value FROM preferences WHERE name='locale'",
@@ -544,7 +544,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn insert_new_people(conn: &Connection) -> Result<()> {
     ///     let mut stmt = conn.prepare("INSERT INTO People (name) VALUES (?)")?;
     ///     stmt.execute(["Joe Smith"])?;
@@ -568,7 +568,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result, params};
+    /// # use haybarn::{Connection, Result, params};
     /// fn insert_rows(conn: &Connection) -> Result<()> {
     ///     let mut app = conn.appender("foo")?;
     ///     app.append_rows([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])?;
@@ -588,7 +588,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result, params, DatabaseName};
+    /// # use haybarn::{Connection, Result, params, DatabaseName};
     /// fn insert_rows(conn: &Connection) -> Result<()> {
     ///     let mut app = conn.appender_to_db("foo", &DatabaseName::Main.to_string())?;
     ///     app.append_rows([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])?;
@@ -608,7 +608,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result, params, DatabaseName};
+    /// # use haybarn::{Connection, Result, params, DatabaseName};
     /// fn insert_rows(conn: &Connection) -> Result<()> {
     ///     let mut app = conn.appender_to_catalog_and_db("catalog", &DatabaseName::Main.to_string(), "foo")?;
     ///     app.append_rows([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])?;
@@ -632,7 +632,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn insert_partial(conn: &Connection) -> Result<()> {
     ///     // Table: CREATE TABLE foo(id INT DEFAULT nextval('seq'), name TEXT, created TIMESTAMP DEFAULT current_timestamp)
     ///     let mut app = conn.appender_with_columns("foo", &["name"])?;
@@ -679,7 +679,7 @@ impl Connection {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn run_query(conn: Connection) -> Result<()> {
     ///   let interrupt_handle = conn.interrupt_handle();
     ///   let join_handle = std::thread::spawn(move || { conn.execute("expensive query", []) });
@@ -1431,7 +1431,7 @@ mod test {
             // Use and_then to apply custom validation with custom error type
             let results: Vec<i32> = rows
                 .and_then(|row| -> CustomResult<i32> {
-                    let val: i32 = row.get(0)?; // duckdb::Error automatically converted via From trait
+                    let val: i32 = row.get(0)?; // haybarn::Error automatically converted via From trait
                     if val > 10 {
                         Err(CustomError::SomeError) // Custom application-specific error
                     } else {

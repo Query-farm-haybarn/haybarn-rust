@@ -1,6 +1,6 @@
-use duckdb_loadable_macros::duckdb_entrypoint_c_api_v2;
-use duckdb_neo::DuckDBType;
-use duckdb_neo::{
+use haybarn_loadable_macros::duckdb_entrypoint_c_api_v2;
+use haybarn_neo::DuckDBType;
+use haybarn_neo::{
     extension::Extension,
     scalar::{ScalarCallbacks, ScalarFunctionBuilder},
     signature::{FunctionParameter, SignatureBuilder},
@@ -16,10 +16,10 @@ impl ScalarCallbacks for AmplifyTest {
         &self,
         _bind_data: Option<&Self::BindData>,
         _init_data: Option<&mut Self::InitData>,
-        _context: &duckdb_neo::connection::Context,
-        vectors: &mut duckdb_neo::data_chunk::VectorCollection,
-        output: duckdb_neo::vector::Vector<'_, duckdb_neo::vector::Unknown>,
-    ) -> duckdb_neo::Result<()> {
+        _context: &haybarn_neo::connection::Context,
+        vectors: &mut haybarn_neo::data_chunk::VectorCollection,
+        output: haybarn_neo::vector::Vector<'_, haybarn_neo::vector::Unknown>,
+    ) -> haybarn_neo::Result<()> {
         let input = vectors.get_vector_at::<i32>(0)?.reader()?;
 
         let mut output = output.cast::<i32>()?;

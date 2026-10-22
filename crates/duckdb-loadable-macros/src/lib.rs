@@ -23,9 +23,9 @@ struct CEntryPointMacroArgs {
     min_duckdb_version: Option<String>,
 }
 
-/// Turns a function into the entrypoint of a `duckdb-neo` extension, written against DuckDB's v2 C API.
+/// Turns a function into the entrypoint of a `haybarn-neo` extension, written against DuckDB's v2 C API.
 ///
-/// The function takes a `&duckdb_neo::extension::Extension` to register functionality through and returns a
+/// The function takes a `&haybarn_neo::extension::Extension` to register functionality through and returns a
 /// `Result` whose error converts into `Box<dyn Error>`. An error fails the load with its message. A panic is reported
 /// as an internal error instead, which invalidates the database. Arguments:
 ///
@@ -33,11 +33,11 @@ struct CEntryPointMacroArgs {
 ///   `<extension_name>.duckdb_extension`.
 /// - `api_version`: the C API version the extension needs, such as `"v2.0.0"`.
 ///
-/// It emits `<extension_name>_init_c_api_v2`, the entrypoint DuckDB calls, and needs one of `duckdb-neo`'s features:
+/// It emits `<extension_name>_init_c_api_v2`, the entrypoint DuckDB calls, and needs one of `haybarn-neo`'s features:
 ///
 /// - `build-extension`: build a `cdylib` and load it with `LOAD`.
 /// - `build-extension-static`: the macro also emits `duckdb_extension_<extension_name>_describe`; pass that to
-///   `duckdb_neo::extension::register_static_extension` to link the extension into the binary.
+///   `haybarn_neo::extension::register_static_extension` to link the extension into the binary.
 #[cfg(feature = "neo")]
 #[proc_macro_attribute]
 pub fn duckdb_entrypoint_c_api_v2(meta: TokenStream, item: TokenStream) -> TokenStream {
@@ -93,9 +93,9 @@ pub fn duckdb_entrypoint_c_api(attr: TokenStream, item: TokenStream) -> TokenStr
                 /// # Safety
                 ///
                 /// Internal Entrypoint for error handling
-                pub unsafe fn #c_entrypoint_internal(info: ::duckdb::ffi::duckdb_extension_info, access: *const ::duckdb::ffi::duckdb_extension_access) -> ::std::result::Result<bool, Box<dyn ::std::error::Error>> {
+                pub unsafe fn #c_entrypoint_internal(info: ::haybarn::ffi::duckdb_extension_info, access: *const ::haybarn::ffi::duckdb_extension_access) -> ::std::result::Result<bool, Box<dyn ::std::error::Error>> {
                     unsafe {
-                        let have_api_struct = ::duckdb::ffi::duckdb_rs_extension_api_init(info, access, #minimum_duckdb_version)?;
+                        let have_api_struct = ::haybarn::ffi::duckdb_rs_extension_api_init(info, access, #minimum_duckdb_version)?;
                         if !have_api_struct {
                             // initialization failed to return an api struct, likely due to an API version mismatch, we can simply return here
                             return Ok(false);
@@ -109,8 +109,8 @@ pub fn duckdb_entrypoint_c_api(attr: TokenStream, item: TokenStream) -> TokenStr
                             // DuckDB already has the real reason for returning a null database handle.
                             return Ok(false);
                         }
-                        let db: ::duckdb::ffi::duckdb_database = *db_ptr;
-                        let connection = ::duckdb::Connection::open_from_raw(db.cast())?;
+                        let db: ::haybarn::ffi::duckdb_database = *db_ptr;
+                        let connection = ::haybarn::Connection::open_from_raw(db.cast())?;
 
                         #prefixed_original_function(connection)?;
 
@@ -122,7 +122,7 @@ pub fn duckdb_entrypoint_c_api(attr: TokenStream, item: TokenStream) -> TokenStr
                 ///
                 /// Entrypoint that will be called by DuckDB
                 #[unsafe(no_mangle)]
-                pub unsafe extern "C" fn #c_entrypoint(info: ::duckdb::ffi::duckdb_extension_info, access: *const ::duckdb::ffi::duckdb_extension_access) -> bool {
+                pub unsafe extern "C" fn #c_entrypoint(info: ::haybarn::ffi::duckdb_extension_info, access: *const ::haybarn::ffi::duckdb_extension_access) -> bool {
                     unsafe {
                         let init_result = #c_entrypoint_internal(info, access);
 
@@ -159,7 +159,7 @@ pub fn duckdb_entrypoint_c_api(attr: TokenStream, item: TokenStream) -> TokenStr
 #[cfg(feature = "neo")]
 mod neo;
 
-/// Derive `duckdb_neo::AsRaw`, exposing the struct's raw DuckDB handle.
+/// Derive `haybarn_neo::AsRaw`, exposing the struct's raw DuckDB handle.
 ///
 /// The handle field is the one marked `#[raw]`, the only field, or the field named `handle`.
 #[cfg(feature = "neo")]
@@ -168,7 +168,7 @@ pub fn derive_as_raw(input: TokenStream) -> TokenStream {
     neo::derive_as_raw(parse_macro_input!(input as syn::DeriveInput))
 }
 
-/// Derive `duckdb_neo::FromRaw`, wrapping a raw DuckDB handle.
+/// Derive `haybarn_neo::FromRaw`, wrapping a raw DuckDB handle.
 ///
 /// Requires `AsRaw`. Every field other than the handle is set to its `Default`.
 #[cfg(feature = "neo")]

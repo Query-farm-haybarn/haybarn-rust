@@ -150,7 +150,7 @@ fn try_download(out_dir: &str) -> Option<HeaderLocation> {
 fn try_download(_out_dir: &str) -> Option<HeaderLocation> {
     if env::var("DUCKDB_DOWNLOAD_LIB").is_ok_and(|value| matches!(value.to_ascii_lowercase().as_str(), "1" | "true")) {
         panic!(
-            "DUCKDB_DOWNLOAD_LIB is set, but libduckdb-sys was built without the `download-lib` feature. \
+            "DUCKDB_DOWNLOAD_LIB is set, but libhaybarn-sys was built without the `download-lib` feature. \
              Enable it (`--features download-lib`) to download a pre-built libduckdb, \
              or set DUCKDB_LIB_DIR / use the `bundled` feature instead."
         );

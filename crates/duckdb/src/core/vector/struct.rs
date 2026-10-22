@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use libduckdb_sys::v1::DuckDbString;
+use libhaybarn_sys::v1::DuckDbString;
 
 use crate::{
     Result,

@@ -42,10 +42,10 @@ impl Statement<'_> {
     /// ### Use with positional parameters
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result, params};
+    /// # use haybarn::{Connection, Result, params};
     /// fn update_rows(conn: &Connection) -> Result<()> {
     ///     let mut stmt = conn.prepare("UPDATE foo SET bar = 'baz' WHERE qux = ?")?;
-    ///     // The `duckdb::params!` macro is mostly useful when the parameters do not
+    ///     // The `haybarn::params!` macro is mostly useful when the parameters do not
     ///     // all have the same type, or if there are more than 32 parameters
     ///     // at once.
     ///     stmt.execute(params![1i32])?;
@@ -60,7 +60,7 @@ impl Statement<'_> {
     /// ### Use without parameters
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result, params};
+    /// # use haybarn::{Connection, Result, params};
     /// fn delete_all(conn: &Connection) -> Result<()> {
     ///     let mut stmt = conn.prepare("DELETE FROM users")?;
     ///     stmt.execute([])?;
@@ -111,7 +111,7 @@ impl Statement<'_> {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Result, Connection};
+    /// # use haybarn::{Result, Connection};
     /// # use arrow::record_batch::RecordBatch;
     /// fn get_arrow_data(conn: &Connection) -> Result<Vec<RecordBatch>> {
     ///     Ok(conn.prepare("SELECT * FROM test")?.query_arrow([])?.collect())
@@ -140,7 +140,7 @@ impl Statement<'_> {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Result, Connection};
+    /// # use haybarn::{Result, Connection};
     /// # use arrow::record_batch::RecordBatch;
     /// fn get_arrow_data(conn: &Connection) -> Result<Vec<RecordBatch>> {
     ///     Ok(conn.prepare("SELECT * FROM test")?.stream_arrow([])?.collect())
@@ -165,7 +165,7 @@ impl Statement<'_> {
     /// ## Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Result, Connection};
+    /// # use haybarn::{Result, Connection};
     /// # use polars::prelude::DataFrame;
     ///
     /// fn get_polars_dfs(conn: &Connection) -> Result<Vec<DataFrame>> {
@@ -182,7 +182,7 @@ impl Statement<'_> {
     /// [polars_core::utils::accumulate_dataframes_vertical_unchecked](https://docs.rs/polars-core/latest/polars_core/utils/fn.accumulate_dataframes_vertical_unchecked.html).
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Result, Connection};
+    /// # use haybarn::{Result, Connection};
     /// # use polars::prelude::DataFrame;
     /// # use polars_core::utils::accumulate_dataframes_vertical_unchecked;
     ///
@@ -216,7 +216,7 @@ impl Statement<'_> {
     /// ### Use without parameters
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn get_names(conn: &Connection) -> Result<Vec<String>> {
     ///     let mut stmt = conn.prepare("SELECT name FROM people")?;
     ///     let mut rows = stmt.query([])?;
@@ -233,10 +233,10 @@ impl Statement<'_> {
     /// ### Use with positional parameters
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn query(conn: &Connection, name: &str) -> Result<()> {
     ///     let mut stmt = conn.prepare("SELECT * FROM test where name = ?")?;
-    ///     let mut rows = stmt.query(duckdb::params![name])?;
+    ///     let mut rows = stmt.query(haybarn::params![name])?;
     ///     while let Some(row) = rows.next()? {
     ///         // ...
     ///     }
@@ -244,11 +244,11 @@ impl Statement<'_> {
     /// }
     /// ```
     ///
-    /// Or, equivalently (but without the [`duckdb::params!`](crate::params!)
+    /// Or, equivalently (but without the [`haybarn::params!`](crate::params!)
     /// macro).
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn query(conn: &Connection, name: &str) -> Result<()> {
     ///     let mut stmt = conn.prepare("SELECT * FROM test where name = ?")?;
     ///     let mut rows = stmt.query([name])?;
@@ -281,7 +281,7 @@ impl Statement<'_> {
     /// ### Use with positional params
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn get_names(conn: &Connection) -> Result<Vec<String>> {
     ///     let mut stmt = conn.prepare("SELECT name FROM people")?;
     ///     let rows = stmt.query_map([], |row| row.get(0))?;
@@ -317,7 +317,7 @@ impl Statement<'_> {
     /// ### Use with positional params
     ///
     /// ```no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn get_names(conn: &Connection) -> Result<Vec<String>> {
     ///     let mut stmt = conn.prepare("SELECT name FROM people WHERE id = ?")?;
     ///     let rows = stmt.query_and_then(["one"], |row| row.get::<_, String>(0))?;
@@ -363,7 +363,7 @@ impl Statement<'_> {
     /// query truly is optional, you can call
     /// [`.optional()`](crate::OptionalExt::optional) on the result of
     /// this to get a `Result<Option<T>>` (requires that the trait
-    /// `duckdb::OptionalExt` is imported).
+    /// `haybarn::OptionalExt` is imported).
     ///
     /// # Failure
     ///
@@ -385,7 +385,7 @@ impl Statement<'_> {
     /// query truly is optional, you can call
     /// [`.optional()`](crate::OptionalExt::optional) on the result of
     /// this to get a `Result<Option<T>>` (requires that the trait
-    /// `duckdb::OptionalExt` is imported).
+    /// `haybarn::OptionalExt` is imported).
     ///
     /// # Failure
     ///
@@ -481,7 +481,7 @@ impl Statement<'_> {
     /// # Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn query_parameter_names(conn: &Connection) -> Result<()> {
     ///     let stmt = conn.prepare("SELECT $foo, $bar")?;
     ///
@@ -522,7 +522,7 @@ impl Statement<'_> {
     /// # Example
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn query(conn: &Connection) -> Result<()> {
     ///     let mut stmt = conn.prepare("SELECT * FROM test WHERE name = ? AND value > ?2")?;
     ///     stmt.raw_bind_parameter(1, "foo")?;

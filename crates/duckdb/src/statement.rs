@@ -159,6 +159,20 @@ impl Statement<'_> {
         Ok(ArrowStream::new(self))
     }
 
+    /// Haybarn compatibility alias for [`stream_arrow`](Self::stream_arrow).
+    ///
+    /// Haybarn 1.10503.x added this to derive the streaming schema through the
+    /// transaction-aware `duckdb_to_arrow_schema` path (needed for, e.g., a
+    /// `GEOMETRY` with a CRS). Upstream `stream_arrow` now does exactly that.
+    #[deprecated(
+        since = "1.10506.0",
+        note = "use `stream_arrow`, which now derives the schema itself"
+    )]
+    #[inline]
+    pub fn stream_arrow_auto<P: Params>(&mut self, params: P) -> Result<ArrowStream<'_>> {
+        self.stream_arrow(params)
+    }
+
     /// Execute the prepared statement, returning a handle to the resulting
     /// vector of polars DataFrame.
     ///
@@ -2083,6 +2097,28 @@ mod test {
         let logical_type = stmt.column_logical_type(0);
         assert_eq!(logical_type.id(), LogicalTypeId::Geometry);
         assert_eq!(logical_type.geometry_crs(), Some("EPSG:4326".to_string()));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_stream_arrow_geometry_with_crs() -> Result<()> {
+        // A CRS-bearing GEOMETRY needs catalog access to convert to Arrow; this
+        // once aborted the process (Haybarn 1.10503.1-rc.10 fix, now upstream).
+        let db = Connection::open_in_memory()?;
+        let mut stmt = db.prepare("SELECT ST_SetCRS('POINT (1 2)'::GEOMETRY, 'EPSG:4326') AS geom")?;
+        let rows: usize = stmt.stream_arrow([])?.map(|batch| batch.num_rows()).sum();
+        assert_eq!(rows, 1);
+
+        #[allow(deprecated)]
+        let rows: usize = stmt.stream_arrow_auto([])?.map(|batch| batch.num_rows()).sum();
+        assert_eq!(rows, 1);
+
+        // The materialized path must fail cleanly or succeed, never abort.
+        let _ = db
+            .prepare("SELECT ST_SetCRS('POINT (1 2)'::GEOMETRY, 'EPSG:4326') AS geom")?
+            .query_arrow([])
+            .map(|arrow| arrow.count());
 
         Ok(())
     }

@@ -139,7 +139,8 @@ pub fn main(out_dir: &str) {
     validate_extension_libraries(&lib_dir, &cmake_build_type, &enabled_extensions);
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
     // Emit in dependents-before-dependencies order for single-pass linkers:
-    // loader → extensions → duckdb_static (which satisfies all core symbols).
+    // loader → extensions → haybarn_static (which satisfies all core symbols).
+    // Haybarn builds the `duckdb_static` CMake target as libhaybarn_static.
     let mut linked_extensions = vec!["core_functions"];
     linked_extensions.extend(enabled_extensions.iter().copied());
     build_static_extension_loader(source_dir, out_dir, &linked_extensions);
@@ -147,7 +148,7 @@ pub fn main(out_dir: &str) {
     for extension in enabled_extensions {
         link_static_library(&lib_dir, &cmake_build_type, &format!("{extension}_extension"));
     }
-    link_static_library(&lib_dir, &cmake_build_type, "duckdb_static");
+    link_static_library(&lib_dir, &cmake_build_type, "haybarn_static");
     link_system_libs();
     #[cfg(feature = "httpfs")]
     emit_httpfs_link_metadata();

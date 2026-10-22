@@ -24,9 +24,10 @@ pub fn main(out_dir: &str) {
 fn link_directive() -> &'static str {
     // If the user specifies DUCKDB_STATIC, do static
     // linking, unless it's explicitly set to 0.
+    // Haybarn ships its libraries as libhaybarn / libhaybarn_static.
     match env::var("DUCKDB_STATIC") {
-        Ok(v) if v != "0" => "static=duckdb_static",
-        _ => "dylib=duckdb",
+        Ok(v) if v != "0" => "static=haybarn_static",
+        _ => "dylib=haybarn",
     }
 }
 
@@ -56,15 +57,15 @@ fn find_duckdb(out_dir: &str) -> HeaderLocation {
             println!("cargo:rerun-if-env-changed=VCPKGRS_DYNAMIC");
         }
 
-        // dependents can access `DEP_DUCKDB_LINK_TARGET` (`duckdb` being the
+        // dependents can access `DEP_HAYBARN_LINK_TARGET` (`haybarn` being the
         // `links=` value in our Cargo.toml) to get this value. This might be
         // useful if you need to ensure whatever crypto library sqlcipher relies
         // on is available, for example.
-        println!("cargo:link-target=duckdb");
+        println!("cargo:link-target=haybarn");
     }
 
     if win_target() && cfg!(feature = "winduckdb") {
-        emit_link_lib("dylib=duckdb");
+        emit_link_lib("dylib=haybarn");
         return HeaderLocation::Wrapper;
     }
     // Allow users to specify where to find DuckDB.
@@ -75,7 +76,7 @@ fn find_duckdb(out_dir: &str) -> HeaderLocation {
         unsafe { env::set_var("PKG_CONFIG_PATH", pkgconfig_path) };
 
         #[cfg(feature = "pkg-config")]
-        let lib_found = duckdb_pkg_config().probe("duckdb").is_ok();
+        let lib_found = duckdb_pkg_config().probe("haybarn").is_ok();
         #[cfg(not(feature = "pkg-config"))]
         let lib_found = false;
 
@@ -101,7 +102,7 @@ fn find_duckdb(out_dir: &str) -> HeaderLocation {
     // See if pkg-config can do everything for us.
     #[cfg(feature = "pkg-config")]
     {
-        match duckdb_pkg_config().print_system_libs(false).probe("duckdb") {
+        match duckdb_pkg_config().print_system_libs(false).probe("haybarn") {
             Ok(mut lib) => {
                 if let Some(header) = lib.include_paths.pop() {
                     HeaderLocation::IncludeDir(header)
@@ -132,7 +133,7 @@ fn try_vcpkg() -> Option<HeaderLocation> {
     #[cfg(feature = "vcpkg")]
     // See if vcpkg can find it.
     if is_compiler("msvc")
-        && let Ok(mut lib) = vcpkg::Config::new().probe("duckdb")
+        && let Ok(mut lib) = vcpkg::Config::new().probe("haybarn")
         && let Some(header) = lib.include_paths.pop()
     {
         return Some(HeaderLocation::IncludeDir(header));
@@ -173,7 +174,7 @@ mod download_lib {
     const RELEASE_PIN_FILE: &str = ".duckdb-release";
 
     /// Where to download prebuilt libraries from: a directory URL that holds the
-    /// `duckdb-shared-libs-<platform>.tar.gz` archives, plus a version label used
+    /// Haybarn `libhaybarn-<platform>.zip` archives, plus a version label used
     /// to name the download cache directory.
     struct DownloadSource {
         base_url: String,
@@ -209,13 +210,14 @@ mod download_lib {
             }
         }
 
-        /// The GitHub release matching the DuckDB version encoded in the crate
-        /// version, used when there is no pin file.
+        /// The Haybarn GitHub release matching the engine version encoded in the
+        /// crate version, used when there is no pin file. Never DuckDB's own
+        /// binaries: they carry DuckDB's extension trust root, not Haybarn's.
         fn from_crate_version() -> Self {
             let version = duckdb_version_from_pkg_version(env!("CARGO_PKG_VERSION"));
             Self {
-                base_url: format!("https://github.com/duckdb/duckdb/releases/download/v{version}"),
-                version: format!("v{version}"),
+                base_url: format!("https://github.com/Query-farm-haybarn/haybarn/releases/download/haybarn-v{version}"),
+                version: format!("haybarn-v{version}"),
             }
         }
 
@@ -329,14 +331,13 @@ mod download_lib {
         Ok(())
     }
 
-    // The archives are flat tarballs: the shared library (plus the MSVC import
+    // The archives are flat zips: the shared library (plus the MSVC import
     // library on Windows) and the public headers.
     fn extract_libduckdb(archive_path: &Path, destination: &Path) -> Result<(), Box<dyn std::error::Error>> {
         let file = fs::File::open(archive_path)?;
-        let mut archive = tar::Archive::new(flate2::read::GzDecoder::new(file));
-        archive.set_preserve_mtime(false);
-        archive.unpack(destination)?;
-        println!("cargo:warning=Extracted libduckdb to {}", destination.display());
+        let mut archive = zip::ZipArchive::new(file)?;
+        archive.extract(destination)?;
+        println!("cargo:warning=Extracted libhaybarn to {}", destination.display());
         Ok(())
     }
 
@@ -417,8 +418,9 @@ fn copy_libduckdb(source_dir: &Path, lib_filename: &str, out_dir: &str) -> Resul
     Ok(())
 }
 
-/// A DuckDB 2.0 `shared-libs` release artifact for one platform, as produced
-/// by `scripts/package_release_artifact.sh` in the DuckDB repository.
+/// A Haybarn 2.0 `libhaybarn` release artifact for one platform, as published
+/// on the Query-farm-haybarn/haybarn GitHub releases (the counterpart of
+/// DuckDB's `duckdb-shared-libs-<platform>.tar.gz`).
 struct LibduckdbArchive {
     #[cfg_attr(not(feature = "download-lib"), allow(dead_code))]
     archive_name: &'static str,
@@ -428,31 +430,27 @@ struct LibduckdbArchive {
 impl LibduckdbArchive {
     fn for_target(target: &str) -> Option<&'static Self> {
         const OSX: LibduckdbArchive = LibduckdbArchive {
-            archive_name: "duckdb-shared-libs-osx-universal.tar.gz",
-            dynamic_lib: "libduckdb.dylib",
+            archive_name: "libhaybarn-osx-universal.zip",
+            dynamic_lib: "libhaybarn.dylib",
         };
         const LINUX_AMD64: LibduckdbArchive = LibduckdbArchive {
-            archive_name: "duckdb-shared-libs-linux-amd64.tar.gz",
-            dynamic_lib: "libduckdb.so",
+            archive_name: "libhaybarn-linux-amd64.zip",
+            dynamic_lib: "libhaybarn.so",
         };
         const LINUX_ARM64: LibduckdbArchive = LibduckdbArchive {
-            archive_name: "duckdb-shared-libs-linux-arm64.tar.gz",
-            dynamic_lib: "libduckdb.so",
+            archive_name: "libhaybarn-linux-arm64.zip",
+            dynamic_lib: "libhaybarn.so",
         };
         const WINDOWS_AMD64: LibduckdbArchive = LibduckdbArchive {
-            archive_name: "duckdb-shared-libs-windows-amd64.tar.gz",
-            dynamic_lib: "duckdb.dll",
-        };
-        const WINDOWS_ARM64: LibduckdbArchive = LibduckdbArchive {
-            archive_name: "duckdb-shared-libs-windows-arm64.tar.gz",
-            dynamic_lib: "duckdb.dll",
+            archive_name: "libhaybarn-windows-amd64.zip",
+            dynamic_lib: "haybarn.dll",
         };
         match target {
             t if t.ends_with("apple-darwin") => Some(&OSX),
             "x86_64-unknown-linux-gnu" => Some(&LINUX_AMD64),
             "aarch64-unknown-linux-gnu" => Some(&LINUX_ARM64),
             "x86_64-pc-windows-msvc" => Some(&WINDOWS_AMD64),
-            "aarch64-pc-windows-msvc" => Some(&WINDOWS_ARM64),
+            // Haybarn does not publish a windows-arm64 libhaybarn yet.
             _ => None,
         }
     }

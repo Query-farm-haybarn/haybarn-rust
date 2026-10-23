@@ -13,14 +13,13 @@ name: Haybarn Rust Publish
 #   its first version must be `cargo publish`ed manually and linked as above;
 #   until then the job prints a notice and skips it.
 #
-# 2.0 PUBLISH GATE (branch haybarn-2.0, crates 1.20000.x): this copy has no tag
-# trigger and its job is disabled, so neither a `haybarn-v1.20000.*` tag nor a
-# dispatch from haybarn-2.0 can publish. To release 2.0 once approved: restore
-#   push:
-#     tags: ["haybarn-v1.20000.*"]
-# drop the `if: false` on the job, commit, then tag haybarn-v<version>.
+# 2.0 line (branch haybarn-2.0, crates 1.20000.x): runs on `haybarn-v1.20000.*`
+# tags only, so 1.5 tags (published from the `haybarn` branch's copy) never
+# reach this file's job.
 
 on:
+  push:
+    tags: ["haybarn-v1.20000.*"]
   workflow_dispatch: {}
 
 permissions:
@@ -33,8 +32,7 @@ env:
 jobs:
   publish:
     name: Publish to crates.io
-    # 2.0 publish gate -- see the header comment.
-    if: false
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'haybarn-v1.20000.')
     runs-on: ubuntu-latest
     steps:
       # The committed crates/libduckdb-sys/duckdb.tar.gz is what `bundled` ships;

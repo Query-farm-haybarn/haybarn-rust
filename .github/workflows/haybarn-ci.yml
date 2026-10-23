@@ -1,6 +1,6 @@
 name: Haybarn Rust CI
 
-# CI for the Haybarn 2.0 line (branch haybarn-2.0, crates 1.20000.x). Covers both
+# CI for the Haybarn 2.0 line (branch haybarn-2.0, crates 1.2xxxx.x). Covers both
 # supported paths on Linux, macOS and Windows:
 #   - bundled: compiles the vendored Haybarn sources (crates/libduckdb-sys/duckdb.tar.gz),
 #     which carry the Haybarn extension trust root;
@@ -93,7 +93,7 @@ jobs:
         run: >-
           cargo test -p haybarn -p haybarn-neo --locked
           --features "haybarn/bundled haybarn/extensions-full haybarn/modern-full haybarn/vscalar
-          haybarn/vtab-full haybarn-neo/bundled haybarn-neo/chrono haybarn-neo/uuid haybarn-neo/r2d2
+          haybarn/vtab-full haybarn-neo/bundled haybarn-neo/chrono haybarn-neo/jiff haybarn-neo/uuid haybarn-neo/r2d2
           haybarn-neo/rust_decimal" ${{ matrix.test_args }}
 
       - name: Test libhaybarn-sys
@@ -137,7 +137,7 @@ jobs:
         run: cargo test -p haybarn --features "modern-full vscalar vtab-full" --locked
 
       - name: Test haybarn-neo
-        run: cargo test -p haybarn-neo --features "chrono uuid r2d2 rust_decimal" --locked
+        run: cargo test -p haybarn-neo --features "chrono jiff uuid r2d2 rust_decimal" --locked
 
       - name: Test haybarn-neo static extension
         run: cargo test -p haybarn-neo --features build-extension-static --test static_extension --test static_macro_function --locked

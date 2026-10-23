@@ -221,8 +221,8 @@ mod download_lib {
             }
         }
 
-        fn archive_url(&self, archive: &LibduckdbArchive) -> String {
-            format!("{}/{}", self.base_url, archive.archive_name)
+        fn archive_url(&self, archive_name: &str) -> String {
+            format!("{}/{}", self.base_url, archive_name)
         }
 
         /// Directory-safe form of the version label.
@@ -257,8 +257,16 @@ mod download_lib {
 
     pub(super) fn run(out_dir: &str) -> Result<HeaderLocation, Box<dyn std::error::Error>> {
         let target = env::var("TARGET")?;
-        let archive = LibduckdbArchive::for_target(&target)
-            .ok_or_else(|| format!("No pre-built libduckdb available for target '{target}'"))?;
+        let archive = LibduckdbArchive::for_target(&target).ok_or_else(|| {
+            if target == "x86_64-apple-darwin" {
+                format!(
+                    "Haybarn 2.0 does not support macOS x86_64 (target '{target}'): no pre-built libhaybarn \
+                     is published for it. Build for aarch64-apple-darwin."
+                )
+            } else {
+                format!("No pre-built libduckdb available for target '{target}'")
+            }
+        })?;
 
         let source = DownloadSource::pinned().unwrap_or_else(DownloadSource::from_crate_version);
 
@@ -270,14 +278,23 @@ mod download_lib {
             .join(source.cache_key());
         fs::create_dir_all(&download_dir)?;
 
-        let archive_path = download_dir.join(archive.archive_name);
         let lib_marker = download_dir.join(archive.dynamic_lib);
 
         if lib_marker.exists() {
             println!("cargo:warning=Reusing libduckdb from {}", download_dir.display());
         } else {
-            let url = source.archive_url(archive);
-            ensure_libduckdb(&url, &archive_path)?;
+            let mut archive_path = download_dir.join(archive.archive_name);
+            if let Err(error) = ensure_libduckdb(&source.archive_url(archive.archive_name), &archive_path) {
+                let Some(legacy_name) = archive.legacy_archive_name else {
+                    return Err(error);
+                };
+                println!(
+                    "cargo:warning=No {} in this release ({error}); trying {legacy_name}",
+                    archive.archive_name
+                );
+                archive_path = download_dir.join(legacy_name);
+                ensure_libduckdb(&source.archive_url(legacy_name), &archive_path)?;
+            }
             extract_libduckdb(&archive_path, &download_dir)?;
             if !lib_marker.exists() {
                 return Err(format!(
@@ -424,33 +441,44 @@ fn copy_libduckdb(source_dir: &Path, lib_filename: &str, out_dir: &str) -> Resul
 struct LibduckdbArchive {
     #[cfg_attr(not(feature = "download-lib"), allow(dead_code))]
     archive_name: &'static str,
+    /// Older name of the same archive, tried when a pinned release predates
+    /// the current one.
+    #[cfg_attr(not(feature = "download-lib"), allow(dead_code))]
+    legacy_archive_name: Option<&'static str>,
     dynamic_lib: &'static str,
 }
 
 impl LibduckdbArchive {
     fn for_target(target: &str) -> Option<&'static Self> {
-        const OSX: LibduckdbArchive = LibduckdbArchive {
-            archive_name: "libhaybarn-osx-universal.zip",
+        // Haybarn 2.0 ships macOS arm64 only. Releases up to haybarn-v2.0.0-rc5
+        // name it libhaybarn-osx-universal.zip (universal arm64 + x86_64).
+        const OSX_ARM64: LibduckdbArchive = LibduckdbArchive {
+            archive_name: "libhaybarn-osx-arm64.zip",
+            legacy_archive_name: Some("libhaybarn-osx-universal.zip"),
             dynamic_lib: "libhaybarn.dylib",
         };
         const LINUX_AMD64: LibduckdbArchive = LibduckdbArchive {
             archive_name: "libhaybarn-linux-amd64.zip",
+            legacy_archive_name: None,
             dynamic_lib: "libhaybarn.so",
         };
         const LINUX_ARM64: LibduckdbArchive = LibduckdbArchive {
             archive_name: "libhaybarn-linux-arm64.zip",
+            legacy_archive_name: None,
             dynamic_lib: "libhaybarn.so",
         };
         const WINDOWS_AMD64: LibduckdbArchive = LibduckdbArchive {
             archive_name: "libhaybarn-windows-amd64.zip",
+            legacy_archive_name: None,
             dynamic_lib: "haybarn.dll",
         };
         match target {
-            t if t.ends_with("apple-darwin") => Some(&OSX),
+            "aarch64-apple-darwin" => Some(&OSX_ARM64),
             "x86_64-unknown-linux-gnu" => Some(&LINUX_AMD64),
             "aarch64-unknown-linux-gnu" => Some(&LINUX_ARM64),
             "x86_64-pc-windows-msvc" => Some(&WINDOWS_AMD64),
-            // Haybarn does not publish a windows-arm64 libhaybarn yet.
+            // Haybarn does not publish a windows-arm64 libhaybarn yet, and
+            // 2.0 dropped macOS x86_64.
             _ => None,
         }
     }

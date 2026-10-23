@@ -108,8 +108,9 @@ load, by design.
   with the `cc` crate. `json` and `parquet` can be linked in statically.
 - **Linked (default without `bundled`)** downloads `libhaybarn-<platform>.zip`
   from the Haybarn GitHub release pinned in `crates/libduckdb-sys/.duckdb-release`
-  (osx-universal, linux-amd64, linux-arm64, windows-amd64) and links the shared
-  `libhaybarn`. The archive is cached under `target/duckdb-download/`.
+  (osx-arm64, linux-amd64, linux-arm64, windows-amd64) and links the shared
+  `libhaybarn`. Haybarn 2.0 dropped macOS x86_64; releases up to rc5 name the
+  macOS archive `osx-universal`, which is tried when `osx-arm64` is missing. The archive is cached under `target/duckdb-download/`.
   `DUCKDB_DOWNLOAD_LIB=0` skips the download; `DUCKDB_LIB_DIR` points at a
   directory holding `libhaybarn` (or, with `DUCKDB_STATIC=1`,
   `libhaybarn_static`) instead. pkg-config and vcpkg are probed for `haybarn`.

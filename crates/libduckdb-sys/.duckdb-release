@@ -24,6 +24,6 @@
 # workflow is not used by Haybarn), then run `./upgrade.sh --sync` to update
 # the `bundled` files.
 
-DUCKDB_RELEASE_COMMIT=e211f3ff83d37cbec73e12dd53fe8edf923eaf4e
-DUCKDB_RELEASE_URL=https://github.com/Query-farm-haybarn/haybarn/releases/download/haybarn-v2.0.0-rc5
-DUCKDB_RELEASE_VERSION=haybarn-v2.0.0-rc5
+DUCKDB_RELEASE_COMMIT=5ab8a76db12ad1ad63c4e4997bce37602a9d0b43
+DUCKDB_RELEASE_URL=https://github.com/Query-farm-haybarn/haybarn/releases/download/haybarn-v2.0.0-rc6
+DUCKDB_RELEASE_VERSION=haybarn-v2.0.0-rc6

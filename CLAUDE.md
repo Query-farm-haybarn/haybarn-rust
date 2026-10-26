@@ -67,7 +67,7 @@ from the crate version; by hand:
 ```shell
 cd crates/libduckdb-sys
 git -C duckdb-sources fetch origin tag haybarn-v<version>
-git -C duckdb-sources checkout haybarn-v<version>        # e.g. haybarn-v2.0.0-rc7
+git -C duckdb-sources checkout haybarn-v<version>        # e.g. haybarn-v2.0.0-rc8
 OVERRIDE_GIT_DESCRIBE=v2.0.0 python3 update_sources.py   # rewrites duckdb.tar.gz
 ```
 

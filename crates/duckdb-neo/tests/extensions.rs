@@ -1,7 +1,7 @@
 //! Checks that extensions enabled through `bundled-cmake-*` features are statically linked.
 #![cfg(feature = "bundled-cmake")]
 
-use duckdb_neo::{
+use haybarn_neo::{
     Parameters,
     connection::Connection,
     environment::{Environment, StorageLocation},
@@ -9,7 +9,7 @@ use duckdb_neo::{
 };
 
 /// Open a connection that can only use statically linked extensions.
-fn connect(extension_directory: &std::path::Path) -> duckdb_neo::Result<Connection> {
+fn connect(extension_directory: &std::path::Path) -> haybarn_neo::Result<Connection> {
     let instance = InstanceBuilder::new()
         .option("extension_directory", extension_directory.to_string_lossy().as_ref())
         .option("autoinstall_known_extensions", "false")
@@ -20,7 +20,7 @@ fn connect(extension_directory: &std::path::Path) -> duckdb_neo::Result<Connecti
 }
 
 /// Return the first column of the first row as a string.
-fn query_string(connection: &Connection, sql: &str) -> duckdb_neo::Result<Option<String>> {
+fn query_string(connection: &Connection, sql: &str) -> haybarn_neo::Result<Option<String>> {
     let chunk = connection
         .query(sql, Parameters::None)?
         .next_chunk()

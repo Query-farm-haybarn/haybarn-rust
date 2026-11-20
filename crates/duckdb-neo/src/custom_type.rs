@@ -16,10 +16,10 @@ use crate::{
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{DuckDBType, environment::{Environment, StorageLocation}};
-/// use duckdb_neo::custom_type::CustomType;
+/// use haybarn_neo::{DuckDBType, environment::{Environment, StorageLocation}};
+/// use haybarn_neo::custom_type::CustomType;
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 /// let conn = instance.connect()?;
@@ -27,7 +27,7 @@ use crate::{
 /// let temperature = CustomType::new("TEMPERATURE", i32::logical_type(&conn)?);
 /// temperature.register(&conn)?;
 ///
-/// let logical_type = duckdb_neo::logical_type::LogicalType::from_text(&conn, "TEMPERATURE")?;
+/// let logical_type = haybarn_neo::logical_type::LogicalType::from_text(&conn, "TEMPERATURE")?;
 /// assert_eq!(logical_type.to_text()?, "TEMPERATURE");
 /// # Ok(())
 /// # }

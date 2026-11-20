@@ -4,7 +4,7 @@
 #[path = "../benches/support/mod.rs"]
 mod support;
 
-use duckdb_neo::{Parameters, Result, connection::Connection};
+use haybarn_neo::{Parameters, Result, connection::Connection};
 use support::{Fixture, base56, dash_split, merge_struct, nulls::Nulls, row_hash};
 
 const ROWS: usize = 5_000;

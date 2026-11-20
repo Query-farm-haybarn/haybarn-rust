@@ -1,4 +1,4 @@
-use duckdb_neo::{
+use haybarn_neo::{
     Parameters, Result,
     environment::{Environment, StorageLocation},
     types::DateValue,

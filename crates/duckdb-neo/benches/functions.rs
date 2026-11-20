@@ -7,7 +7,7 @@
 mod support;
 
 use divan::{Bencher, counter::ItemsCount};
-use duckdb_neo::{Parameters, connection::Connection};
+use haybarn_neo::{Parameters, connection::Connection};
 use support::{Fixture, base56, bench_rows, dash_split, merge_struct, row_hash};
 
 fn main() {

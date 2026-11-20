@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use duckdb::{
+use haybarn::{
     Connection, Result,
     arrow::{record_batch::RecordBatch, util::pretty::print_batches},
 };

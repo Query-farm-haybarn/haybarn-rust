@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::raw::RawExt;
-use duckdb_loadable_macros::{AsRaw, FromRaw};
+use haybarn_loadable_macros::{AsRaw, FromRaw};
 
 use crate::{Result, error::check_api_call, ffi};
 

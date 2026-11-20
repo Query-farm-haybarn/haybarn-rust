@@ -5,7 +5,7 @@
 //
 // Run with: cargo run --example vscalar --features vscalar
 
-use duckdb::{
+use haybarn::{
     Connection, Result,
     core::{DataChunkHandle, LogicalTypeHandle, LogicalTypeId},
     vscalar::{ScalarFunctionSignature, VScalar},

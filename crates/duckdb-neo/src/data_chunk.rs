@@ -3,7 +3,7 @@
 use std::cell::OnceCell;
 use std::ops::Deref;
 
-use duckdb_loadable_macros::AsRaw;
+use haybarn_loadable_macros::AsRaw;
 
 use crate::connection::{Factory, HasFactory};
 use crate::error::check_api_call_no_err;
@@ -290,13 +290,13 @@ impl ChildrenMut<'_> {
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{
+/// use haybarn_neo::{
 ///     Parameters,
 ///     environment::Environment,
 ///     environment::StorageLocation,
 /// };
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 /// let conn = instance.connect()?;
@@ -446,8 +446,8 @@ impl<'a> DataChunk<'a> {
     /// [`Self::get_vector_at_mut`] to write or flatten the vector:
     ///
     /// ```compile_fail,E0596
-    /// # use duckdb_neo::{DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::{DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// # let env = Environment::new()?;
     /// # let conn = env.open(StorageLocation::InMemory)?.connect()?;
     /// let chunk = DataChunk::create(&conn, &[i32::logical_type(&conn)?], true)?;
@@ -472,8 +472,8 @@ impl<'a> DataChunk<'a> {
     /// The borrow rules out other views of the chunk while the vector is alive:
     ///
     /// ```compile_fail,E0502
-    /// # use duckdb_neo::{DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::{DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// # let env = Environment::new()?;
     /// # let conn = env.open(StorageLocation::InMemory)?.connect()?;
     /// let mut chunk = DataChunk::create(&conn, &[i32::logical_type(&conn)?], true)?;

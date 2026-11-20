@@ -215,7 +215,7 @@ fn check_union<M: UnionMembers>(vector: &Vector<'_, Unknown>) -> Result<()> {
 /// Reads `UNION` rows whose member types `M` are checked once, when the reader is created.
 ///
 /// ```
-/// # use duckdb_neo::{Parameters, Result, environment::{Environment, StorageLocation}, types::Union, vector::RowReader};
+/// # use haybarn_neo::{Parameters, Result, environment::{Environment, StorageLocation}, types::Union, vector::RowReader};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let chunk = conn
@@ -310,7 +310,7 @@ impl<'a, M: UnionReaders + 'a> std::fmt::Debug for UnionReader<'a, M> {
 /// written keep their contents; [`Vector::set_size`] makes new rows the first member.
 ///
 /// ```
-/// # use duckdb_neo::{Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, logical_type::LogicalType, types::Union};
+/// # use haybarn_neo::{Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, logical_type::LogicalType, types::Union};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let union_type = LogicalType::from_text(&conn, "UNION(num INTEGER, str VARCHAR)")?;
@@ -331,7 +331,7 @@ impl<'a, M: UnionReaders + 'a> std::fmt::Debug for UnionReader<'a, M> {
 /// Member types are checked against the union:
 ///
 /// ```
-/// # use duckdb_neo::{Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, logical_type::LogicalType, types::Union};
+/// # use haybarn_neo::{Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, logical_type::LogicalType, types::Union};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// # let union_type = LogicalType::from_text(&conn, "UNION(num INTEGER, str VARCHAR)")?;
@@ -507,7 +507,7 @@ impl<U: NativeElement> Vector<'_, U> {
 
 #[cfg(test)]
 mod tests {
-    use duckdb_loadable_macros::AsDuckDB;
+    use haybarn_loadable_macros::AsDuckDB;
 
     use crate::{
         Result,

@@ -15,7 +15,7 @@ use crate::{
 /// through one writer. DuckDB requires unique, non-NULL keys per row, which the writer does not check.
 ///
 /// ```
-/// # use duckdb_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::Map};
+/// # use haybarn_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::Map};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let mut chunk = DataChunk::create(&conn, &[Map::<String, i32>::logical_type(&conn)?], true)?;

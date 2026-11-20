@@ -7,7 +7,7 @@ use crate::{
 /// Reads `LIST` rows, with the element reader prepared once.
 ///
 /// ```
-/// # use duckdb_neo::{Parameters, Result, environment::{Environment, StorageLocation}, types::List, vector::RowReader};
+/// # use haybarn_neo::{Parameters, Result, environment::{Environment, StorageLocation}, types::List, vector::RowReader};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let chunk = conn.query("SELECT [[1, NULL], [3]]::INTEGER[][]", Parameters::None)?.next_chunk()?.unwrap();
@@ -132,7 +132,7 @@ impl<'r, R: RowReader> Elements<'r, R> {
 /// Reading a key panics if it is NULL, which DuckDB does not allow in a `MAP`.
 ///
 /// ```
-/// # use duckdb_neo::{Parameters, Result, environment::{Environment, StorageLocation}, types::Map, vector::RowReader};
+/// # use haybarn_neo::{Parameters, Result, environment::{Environment, StorageLocation}, types::Map, vector::RowReader};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let chunk = conn.query("SELECT MAP {'a': 1, 'b': NULL}", Parameters::None)?.next_chunk()?.unwrap();

@@ -6,7 +6,7 @@ use crate::{Result, types::Array};
 /// Writes `ARRAY` rows, each owning `N` elements of the child, through the element type's own [`RowWriter`].
 ///
 /// ```
-/// # use duckdb_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::Array, vector::RowWriter};
+/// # use haybarn_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::Array, vector::RowWriter};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let mut chunk = DataChunk::create(&conn, &[Array::<i32, 2>::logical_type(&conn)?], true)?;

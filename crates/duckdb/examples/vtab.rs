@@ -16,7 +16,7 @@
 //
 // Run with: cargo run --example vtab --features vtab
 
-use duckdb::{
+use haybarn::{
     Connection, Result,
     arrow::util::pretty::print_batches,
     core::{DataChunkHandle, Inserter, LogicalTypeHandle, LogicalTypeId},

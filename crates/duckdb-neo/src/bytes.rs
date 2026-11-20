@@ -17,9 +17,9 @@ use crate::{
 /// Construction borrows the arena, not the input:
 ///
 /// ```
-/// use duckdb_neo::vector::{Arena, DuckDBBytes};
+/// use haybarn_neo::vector::{Arena, DuckDBBytes};
 ///
-/// fn encode(arena: &Arena) -> duckdb_neo::Result<DuckDBBytes<'_>> {
+/// fn encode(arena: &Arena) -> haybarn_neo::Result<DuckDBBytes<'_>> {
 ///     DuckDBBytes::new(arena, b"value")
 /// }
 /// ```
@@ -27,9 +27,9 @@ use crate::{
 /// The encoded value cannot outlive its arena:
 ///
 /// ```compile_fail
-/// use duckdb_neo::vector::{Arena, DuckDBBytes};
+/// use haybarn_neo::vector::{Arena, DuckDBBytes};
 ///
-/// fn escape(arena: &Arena) -> duckdb_neo::Result<DuckDBBytes<'static>> {
+/// fn escape(arena: &Arena) -> haybarn_neo::Result<DuckDBBytes<'static>> {
 ///     DuckDBBytes::new(arena, b"a value stored in the arena")
 /// }
 /// ```
@@ -37,7 +37,7 @@ use crate::{
 /// Borrowed bytes prevent resizing the owning vector:
 ///
 /// ```compile_fail,E0499
-/// use duckdb_neo::{Result, vector::Vector};
+/// use haybarn_neo::{Result, vector::Vector};
 ///
 /// fn resize(vector: &mut Vector<'_, String>) -> Result<()> {
 ///     let mut writer = vector.writer()?;
@@ -51,7 +51,7 @@ use crate::{
 /// Nor can the writer replace storage while bytes are borrowed:
 ///
 /// ```compile_fail,E0499
-/// use duckdb_neo::{Result, vector::Vector};
+/// use haybarn_neo::{Result, vector::Vector};
 ///
 /// fn overwrite(vector: &mut Vector<'_, String>) -> Result<()> {
 ///     let mut writer = vector.writer()?;

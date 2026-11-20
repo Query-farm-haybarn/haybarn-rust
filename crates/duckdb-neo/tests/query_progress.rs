@@ -1,11 +1,11 @@
-use duckdb_neo::{
+use haybarn_neo::{
     Parameters,
     environment::{Environment, StorageLocation},
     query_progress::{QueryProgress, QueryProgressTracker},
 };
 
 #[test]
-fn test_owned_progress_snapshots() -> duckdb_neo::Result<()> {
+fn test_owned_progress_snapshots() -> haybarn_neo::Result<()> {
     let connection = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
     assert!(QueryProgress::new(&connection)?.is_none());
     let tracker = QueryProgressTracker::new(&connection)?;
@@ -25,7 +25,7 @@ fn test_owned_progress_snapshots() -> duckdb_neo::Result<()> {
 }
 
 #[test]
-fn test_progress_snapshot_from_other_thread() -> duckdb_neo::Result<()> {
+fn test_progress_snapshot_from_other_thread() -> haybarn_neo::Result<()> {
     let connection = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
     let tracker = QueryProgressTracker::new(&connection)?;
 

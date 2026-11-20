@@ -2,7 +2,7 @@
 
 use std::marker::PhantomData;
 
-use duckdb_loadable_macros::{AsRaw, DropHandle, FromRaw};
+use haybarn_loadable_macros::{AsRaw, DropHandle, FromRaw};
 
 use crate::{
     Result,
@@ -255,10 +255,10 @@ impl<'link> FileBuilder<'link> {
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::environment::{Environment, StorageLocation};
-/// use duckdb_neo::file::{FileSystem, FileBuilder};
+/// use haybarn_neo::environment::{Environment, StorageLocation};
+/// use haybarn_neo::file::{FileSystem, FileBuilder};
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 /// let conn = instance.connect()?;

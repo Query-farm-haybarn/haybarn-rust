@@ -40,9 +40,9 @@ struct AttachOptions {
 /// Per-database options belong to [`AttachBuilder`].
 ///
 /// ```
-/// use duckdb_neo::{environment::Environment, instance::InstanceBuilder};
+/// use haybarn_neo::{environment::Environment, instance::InstanceBuilder};
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = InstanceBuilder::new().option("threads", "2").build(&env)?;
 /// # Ok(())
@@ -108,13 +108,13 @@ impl InstanceBuilder {
 /// Startup options belong to [`InstanceBuilder`].
 ///
 /// ```
-/// use duckdb_neo::{
+/// use haybarn_neo::{
 ///     environment::{Environment, StorageLocation},
 ///     instance::{AttachBuilder, Instance},
 ///     Parameters,
 /// };
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let attachment = AttachBuilder::new(StorageLocation::InMemory)
 ///     .options([("read_only", "false")])
 ///     .alias("analytics")
@@ -189,13 +189,13 @@ impl From<StorageLocation> for AttachBuilder {
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{
+/// use haybarn_neo::{
 ///     FromValue,
 ///     connection::SettingScope,
 ///     environment::{Environment, StorageLocation},
 /// };
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 ///

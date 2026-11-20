@@ -15,7 +15,7 @@ impl Connection {
     /// [`prepare_cached`](Connection::prepare_cached) once it is dropped.
     ///
     /// ```rust,no_run
-    /// # use duckdb::{Connection, Result};
+    /// # use haybarn::{Connection, Result};
     /// fn insert_new_people(conn: &Connection) -> Result<()> {
     ///     {
     ///         let mut stmt = conn.prepare_cached("INSERT INTO People (name) VALUES (?)")?;

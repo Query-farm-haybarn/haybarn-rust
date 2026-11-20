@@ -18,9 +18,9 @@ use crate::{
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{environment::Environment, environment::StorageLocation, types::List, ToValue};
+/// use haybarn_neo::{environment::Environment, environment::StorageLocation, types::List, ToValue};
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 /// let conn = instance.connect()?;

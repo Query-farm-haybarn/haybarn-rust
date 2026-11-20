@@ -20,7 +20,7 @@ from urllib.parse import urlsplit
 
 WORKSPACE_DIR = Path(__file__).resolve().parents[1]
 RELEASE_PIN_FILE = Path("crates/libduckdb-sys/.duckdb-release")
-CRATES = ("duckdb", "libduckdb-sys", "duckdb-loadable-macros")
+CRATES = ("haybarn", "libhaybarn-sys", "haybarn-loadable-macros")
 EXTENSIONS = ("core_functions", "parquet", "json", "icu")
 # The cc backend cannot compile jemalloc's C sources as C++.
 EXCLUDED_THIRD_PARTY = ("third_party/jemalloc",)
@@ -104,14 +104,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         metavar="duckdb-rs-version",
         nargs="?",
         type=crate_version,
-        help="version for duckdb, libduckdb-sys, and duckdb-loadable-macros",
+        help="version for haybarn, libhaybarn-sys, and haybarn-loadable-macros",
     )
     parser.add_argument(
         "neo_version",
         metavar="neo-version",
         nargs="?",
         type=crate_version,
-        help="version for duckdb-neo",
+        help="version for haybarn-neo",
     )
     parser.add_argument(
         "--core-commit",
@@ -207,7 +207,7 @@ def update_crate_versions(root: Path, version: str, neo_version: str) -> None:
     )
     for crate in CRATES:
         text = replace_version(text, crate, version)
-    text = replace_version(text, "duckdb-neo", neo_version)
+    text = replace_version(text, "haybarn-neo", neo_version)
     workspace.write_text(text, encoding="utf-8")
 
     neo = root / "crates/duckdb-neo/Cargo.toml"
@@ -222,7 +222,7 @@ def update_crate_versions(root: Path, version: str, neo_version: str) -> None:
     text = readme.read_text(encoding="utf-8")
     for crate in CRATES:
         text = replace_version(text, crate, version)
-    text = replace_version(text, "duckdb-neo", neo_version)
+    text = replace_version(text, "haybarn-neo", neo_version)
     readme.write_text(text, encoding="utf-8")
 
     for path, expected in ((workspace, version), (neo, neo_version)):
@@ -259,7 +259,7 @@ def regenerate_bindings(
 ) -> None:
     sys_dir = root / "crates/libduckdb-sys"
     for name in ("bindgen.rs", "bindgen_v2.rs"):
-        for path in target_dir.glob(f"**/libduckdb-sys-*/out/{name}"):
+        for path in target_dir.glob(f"**/libhaybarn-sys-*/out/{name}"):
             if path.is_file():
                 path.unlink()
 
@@ -269,7 +269,7 @@ def regenerate_bindings(
             "cargo",
             "check",
             "-p",
-            "libduckdb-sys",
+            "libhaybarn-sys",
             "--no-default-features",
             "--features",
             ",".join(("buildtime_bindgen", *features)),
@@ -285,7 +285,7 @@ def regenerate_bindings(
 
     generated = [
         path
-        for path in target_dir.glob(f"**/libduckdb-sys-*/out/{generated_name}")
+        for path in target_dir.glob(f"**/libhaybarn-sys-*/out/{generated_name}")
         if path.is_file()
     ]
     if len(generated) != 1:
@@ -525,18 +525,18 @@ def check_package_size(root: Path, version: str) -> None:
             "cargo",
             "package",
             "-p",
-            "libduckdb-sys",
+            "libhaybarn-sys",
             "--no-verify",
             "--allow-dirty",
         ],
         cwd=root,
         check=True,
     )
-    package = cargo_target_dir(root) / "package" / f"libduckdb-sys-{version}.crate"
+    package = cargo_target_dir(root) / "package" / f"libhaybarn-sys-{version}.crate"
     size = package.stat().st_size
     limit = CRATES_IO_MAX_UPLOAD_SIZE
     print(
-        f"libduckdb-sys package is {size / 2**20:.2f} MiB "
+        f"libhaybarn-sys package is {size / 2**20:.2f} MiB "
         f"({size / limit:.0%} of the {limit / 2**20:.0f} MiB crates.io limit)"
     )
     if size > limit:

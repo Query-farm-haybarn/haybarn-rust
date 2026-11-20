@@ -24,12 +24,12 @@
 //! with [`Union`] as the runtime fallback.
 //!
 //! ```
-//! use duckdb_neo::{types::List, vector::{Elements, ListReader, RowReader, VectorReader}};
+//! use haybarn_neo::{types::List, vector::{Elements, ListReader, RowReader, VectorReader}};
 //!
 //! fn list_items<'r>(row: Elements<'r, VectorReader<'_, i32>>) -> Vec<Option<&'r i32>> {
 //!     row.iter().collect()
 //! }
-//! fn first_row<'a>(lists: &'a ListReader<'a, i32>) -> duckdb_neo::Result<Option<Vec<Option<&'a i32>>>> {
+//! fn first_row<'a>(lists: &'a ListReader<'a, i32>) -> haybarn_neo::Result<Option<Vec<Option<&'a i32>>>> {
 //!     Ok(lists.get(0)?.map(list_items))
 //! }
 //! # let _ = (first_row, std::marker::PhantomData::<List<i32>>);

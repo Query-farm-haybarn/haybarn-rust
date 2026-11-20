@@ -1,5 +1,5 @@
-use duckdb_loadable_macros::AsNativeElement;
-use duckdb_neo::{
+use haybarn_loadable_macros::AsNativeElement;
+use haybarn_neo::{
     AsDuckDB, DuckDBType, Parameters, Result, ToValue,
     connection::Context,
     data_chunk::{DataChunk, VectorCollection},
@@ -71,7 +71,7 @@ fn owned_struct_fields_roundtrip_without_a_write_projection() -> Result<()> {
         matrix: List<List<i32>>,
         optional: Option<i64>,
     }
-    fn accepts_self<T: duckdb_neo::vector::WithWriter + duckdb_neo::vector::WithReader>() {}
+    fn accepts_self<T: haybarn_neo::vector::WithWriter + haybarn_neo::vector::WithReader>() {}
     accepts_self::<Record>();
     let record = || Record {
         primary: Point {
@@ -162,7 +162,7 @@ fn owned_struct_fields_roundtrip_without_a_write_projection() -> Result<()> {
 
 #[test]
 fn owned_binary_and_bignum_fields_roundtrip() -> Result<()> {
-    use duckdb_neo::types::{BigNumValue, BlobValue};
+    use haybarn_neo::types::{BigNumValue, BlobValue};
     #[derive(Debug, PartialEq, AsDuckDB)]
     #[duckdb(reader, writer)]
     struct Payload {
@@ -640,9 +640,9 @@ fn derived_null_children_checks_bounds() -> Result<()> {
     let mut vector = chunk.get_vector_at_mut::<Row>(0)?;
     vector.set_size(1)?;
     let mut writer = vector.writer()?;
-    assert!(duckdb_neo::__derive::null_children(&mut writer, 1).is_err());
-    assert!(duckdb_neo::__derive::null_children(&mut writer, 100_000).is_err());
-    duckdb_neo::__derive::null_children(&mut writer, 0)
+    assert!(haybarn_neo::__derive::null_children(&mut writer, 1).is_err());
+    assert!(haybarn_neo::__derive::null_children(&mut writer, 100_000).is_err());
+    haybarn_neo::__derive::null_children(&mut writer, 0)
 }
 
 #[test]
@@ -810,7 +810,7 @@ fn matrix(items: &[i32], inner: &[i32]) -> Matrix {
 }
 
 /// Size a `Matrix` vector's list fields for `rows` rows of `matrix(&[_; 2], &[_; 2])`.
-fn size_matrix(vector: &mut duckdb_neo::vector::Vector<'_, Matrix>, rows: usize) -> Result<()> {
+fn size_matrix(vector: &mut haybarn_neo::vector::Vector<'_, Matrix>, rows: usize) -> Result<()> {
     let mut fields = vector.children_mut().unwrap();
     fields.get_vector_at_mut::<List<i32>>(0)?.set_child_size(2 * rows)?;
     let mut matrix = fields.get_vector_at_mut::<List<List<i32>>>(1)?;
@@ -955,12 +955,12 @@ fn casts_convert_every_row() -> Result<()> {
 #[duckdb(reader, writer)]
 struct Fallible {
     x: Option<i32>,
-    bits: Option<duckdb_neo::types::BitValue>,
+    bits: Option<haybarn_neo::types::BitValue>,
 }
 
 #[test]
 fn failed_struct_writes_leave_the_row_null() -> Result<()> {
-    use duckdb_neo::types::BitValue;
+    use haybarn_neo::types::BitValue;
 
     let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
     let mut chunk = DataChunk::create(&conn, &[Fallible::logical_type(&conn)?], true)?;
@@ -996,7 +996,7 @@ fn failed_struct_writes_leave_the_row_null() -> Result<()> {
 
 #[test]
 fn failed_array_writes_leave_the_row_null() -> Result<()> {
-    use duckdb_neo::types::BitValue;
+    use haybarn_neo::types::BitValue;
 
     let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
     let mut chunk = DataChunk::create(&conn, &[Array::<BitValue, 2>::logical_type(&conn)?], true)?;

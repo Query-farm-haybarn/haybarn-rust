@@ -1,4 +1,4 @@
-use duckdb::{
+use haybarn::{
     Connection, Result,
     core::{DataChunkHandle, Inserter, LogicalTypeHandle, LogicalTypeId},
     duckdb_entrypoint_c_api,

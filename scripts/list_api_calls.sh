@@ -33,13 +33,13 @@ shift $((OPTIND - 1))
 if [[ -z "$bindings" ]]; then
     # The build-script-executed message carries libduckdb-sys's OUT_DIR.
     # Only libduckdb-sys's build script has to succeed, so a failing duckdb-neo build is tolerated.
-    build_json="$(cargo build -p duckdb-neo --message-format=json "$@")" \
+    build_json="$(cargo build -p haybarn-neo --message-format=json "$@")" \
         || echo "warning: cargo build failed, using the build script output anyway" >&2
     while IFS= read -r dir; do
         [[ -f "$dir/bindgen_v2.rs" ]] && bindings="$dir/bindgen_v2.rs"
     done < <(printf '%s\n' "$build_json" \
         | rg '"reason":"build-script-executed"' \
-        | rg '"package_id":"[^"]*libduckdb-sys' \
+        | rg '"package_id":"[^"]*libhaybarn-sys' \
         | rg -o '"out_dir":"([^"]+)"' -r '$1')
     if [[ -z "$bindings" ]]; then
         echo "error: no bindgen_v2.rs found in libduckdb-sys OUT_DIR (is capi-v2 enabled?)" >&2

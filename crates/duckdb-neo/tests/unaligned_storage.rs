@@ -1,7 +1,7 @@
 //! DuckDB aligns 16-byte values to 8 bytes only: uncompressed column segments are scanned in place,
 //! after a block header, so these reads and writes must not assume 16-byte alignment.
 
-use duckdb_neo::{
+use haybarn_neo::{
     Parameters, Result,
     connection::Connection,
     environment::{Environment, StorageLocation},
@@ -29,7 +29,7 @@ fn execute(conn: &Connection, sql: &str) -> Result<Vec<i64>> {
 
 fn register_copy<T>(conn: &Connection, name: &str) -> Result<()>
 where
-    T: duckdb_neo::DuckDBType + ReadableNativeElement + WritableNativeElement<Write = T> + 'static,
+    T: haybarn_neo::DuckDBType + ReadableNativeElement + WritableNativeElement<Write = T> + 'static,
     for<'a> T::Ref<'a>: std::ops::Deref<Target = T>,
 {
     MicroScalar::create(name, |_ctx, input: Vector<'_, T>, mut output: Vector<'_, T>| {

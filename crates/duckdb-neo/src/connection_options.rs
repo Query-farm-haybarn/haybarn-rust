@@ -15,13 +15,13 @@ use crate::{AsRaw, DropHandle, FromRaw, Result, error::check_api_call};
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{
+/// use haybarn_neo::{
 ///     FromValue,
 ///     connection::SettingScope,
 ///     environment::{Environment, StorageLocation},
 /// };
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 ///
@@ -106,8 +106,8 @@ impl ConfigOption {
 /// The settings of an instance, a connection or a callback context, borrowed from it.
 ///
 /// ```compile_fail,E0597
-/// # use duckdb_neo::environment::{Environment, StorageLocation};
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # use haybarn_neo::environment::{Environment, StorageLocation};
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let instance = Environment::new()?.open(StorageLocation::InMemory)?;
 /// let config = {
 ///     let conn = instance.connect()?;

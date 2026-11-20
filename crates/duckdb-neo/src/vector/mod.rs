@@ -23,8 +23,8 @@
 //! narrowed to its logical type before reading:
 //!
 //! ```
-//! # use duckdb_neo::{environment::{Environment, StorageLocation}, Parameters};
-//! # fn main() -> duckdb_neo::Result<()> {
+//! # use haybarn_neo::{environment::{Environment, StorageLocation}, Parameters};
+//! # fn main() -> haybarn_neo::Result<()> {
 //! # let env = Environment::new()?;
 //! # let conn = env.open(StorageLocation::InMemory)?.connect()?;
 //! # let mut result = conn.query("SELECT 1::INTEGER", Parameters::None)?;
@@ -61,8 +61,8 @@ use crate::{
 };
 
 mod element;
-use duckdb_loadable_macros::AsRaw;
 pub use element::*;
+use haybarn_loadable_macros::AsRaw;
 
 ffi_enum_redeclaration! {
     pub enum StorageKind <- ffi::DUCKDB_V2_VECTOR_TYPE {
@@ -139,7 +139,7 @@ impl Access {
 /// Read rows through [`Self::reader`] and write them through [`Self::writer`].
 ///
 /// ```compile_fail,E0599
-/// use duckdb_neo::vector::Vector;
+/// use haybarn_neo::vector::Vector;
 ///
 /// fn read(vector: &Vector<'_, i32>) {
 ///     let _ = vector.get(0);
@@ -147,7 +147,7 @@ impl Access {
 /// ```
 ///
 /// ```compile_fail,E0599
-/// use duckdb_neo::vector::Vector;
+/// use haybarn_neo::vector::Vector;
 ///
 /// fn write(vector: &mut Vector<'_, i32>) {
 ///     let _ = vector.write(0, Some(42));
@@ -532,8 +532,8 @@ impl<'a, T: NativeElement> Vector<'a, T> {
     /// another vector's, since readers trust their validated types:
     ///
     /// ```compile_fail,E0596
-    /// # use duckdb_neo::{DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::List};
-    /// # fn main() -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::{DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::List};
+    /// # fn main() -> haybarn_neo::Result<()> {
     /// # let env = Environment::new()?;
     /// # let conn = env.open(StorageLocation::InMemory)?.connect()?;
     /// let types = [List::<String>::logical_type(&conn)?, List::<i64>::logical_type(&conn)?];

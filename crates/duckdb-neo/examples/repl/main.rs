@@ -1,11 +1,11 @@
 // Usage:
-// cargo run -p duckdb-neo --example repl
-// cargo run -p duckdb-neo --example repl path/to/database.db
-// cargo run -p duckdb-neo --example repl -- -c "SELECT 1"
-// cargo run -p duckdb-neo --example repl path/to/database.db -c "SELECT 1" -c "SELECT 2"
-// cat example.sql | cargo run -p duckdb-neo --example repl
+// cargo run -p haybarn-neo --example repl
+// cargo run -p haybarn-neo --example repl path/to/database.db
+// cargo run -p haybarn-neo --example repl -- -c "SELECT 1"
+// cargo run -p haybarn-neo --example repl path/to/database.db -c "SELECT 1" -c "SELECT 2"
+// cat example.sql | cargo run -p haybarn-neo --example repl
 
-use duckdb_neo::{
+use haybarn_neo::{
     Parameters, Result,
     connection::Connection,
     environment::{Environment, StorageLocation},
@@ -31,7 +31,7 @@ impl SqlRepl {
     }
 
     fn run(&mut self) {
-        println!("duckdb-neo v{} 🦀", env!("CARGO_PKG_VERSION"));
+        println!("haybarn-neo v{} 🦀", env!("CARGO_PKG_VERSION"));
         println!("Type '.help' for help.");
 
         loop {

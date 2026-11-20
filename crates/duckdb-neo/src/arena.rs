@@ -1,5 +1,5 @@
 use crate::{Result, bytes::DuckDBBytes, error::check_api_call, ffi, raw::RawExt};
-use duckdb_loadable_macros::{AsRaw, FromRaw};
+use haybarn_loadable_macros::{AsRaw, FromRaw};
 
 /// A borrowed byte arena, valid until its vector is resized, flattened, or destroyed.
 #[derive(Debug, FromRaw, AsRaw)]

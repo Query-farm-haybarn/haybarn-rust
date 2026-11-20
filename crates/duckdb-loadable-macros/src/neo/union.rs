@@ -122,20 +122,20 @@ pub(crate) fn as_duckdb_union(input: &syn::DeriveInput) -> syn::Result<TokenStre
 fn logical_type(input: &syn::DeriveInput, variants: &UnionVariants<'_>) -> TokenStream {
     let names = &variants.names;
     let types = &variants.types;
-    let generics = bounded_generics(input, types, &syn::parse_quote!(::duckdb_neo::DuckDBType));
+    let generics = bounded_generics(input, types, &syn::parse_quote!(::haybarn_neo::DuckDBType));
     let ident = &input.ident;
     let link_type = fresh_type_ident(input, "__DuckDBLink");
     let (impl_generics, type_generics, where_clause) = generics.split_for_impl();
 
     quote! {
-        impl #impl_generics ::duckdb_neo::DuckDBType for #ident #type_generics #where_clause {
-            fn logical_type<#link_type: ::duckdb_neo::connection::FFILink + ?::core::marker::Sized>(
+        impl #impl_generics ::haybarn_neo::DuckDBType for #ident #type_generics #where_clause {
+            fn logical_type<#link_type: ::haybarn_neo::connection::FFILink + ?::core::marker::Sized>(
                 link: &#link_type,
-            ) -> ::duckdb_neo::Result<::duckdb_neo::logical_type::LogicalType> {
+            ) -> ::haybarn_neo::Result<::haybarn_neo::logical_type::LogicalType> {
                 link.logical_type_create(
                     "UNION",
-                    ::duckdb_neo::Parameters::named(&[
-                        #((#names, &<#types as ::duckdb_neo::DuckDBType>::logical_type(link)?)),*
+                    ::haybarn_neo::Parameters::named(&[
+                        #((#names, &<#types as ::haybarn_neo::DuckDBType>::logical_type(link)?)),*
                     ]),
                 )
             }
@@ -146,29 +146,29 @@ fn logical_type(input: &syn::DeriveInput, variants: &UnionVariants<'_>) -> Token
 fn to_value(input: &syn::DeriveInput, variants: &UnionVariants<'_>) -> TokenStream {
     let idents = &variants.idents;
     let indexes = 0..variants.idents.len();
-    let mut generics = bounded_generics(input, &variants.types, &syn::parse_quote!(::duckdb_neo::ToValue));
+    let mut generics = bounded_generics(input, &variants.types, &syn::parse_quote!(::haybarn_neo::ToValue));
     for ty in &variants.types {
         generics
             .make_where_clause()
             .predicates
-            .push(syn::parse_quote!(#ty: ::duckdb_neo::DuckDBType));
+            .push(syn::parse_quote!(#ty: ::haybarn_neo::DuckDBType));
     }
     let ident = &input.ident;
     let link_type = fresh_type_ident(input, "__DuckDBLink");
     let (impl_generics, type_generics, where_clause) = generics.split_for_impl();
 
     quote! {
-        impl #impl_generics ::duckdb_neo::ToValue for #ident #type_generics #where_clause {
-            fn value<#link_type: ::duckdb_neo::connection::FFILink + ?::core::marker::Sized>(
+        impl #impl_generics ::haybarn_neo::ToValue for #ident #type_generics #where_clause {
+            fn value<#link_type: ::haybarn_neo::connection::FFILink + ?::core::marker::Sized>(
                 &self,
                 link: &#link_type,
-            ) -> ::duckdb_neo::Result<::duckdb_neo::value::Value> {
+            ) -> ::haybarn_neo::Result<::haybarn_neo::value::Value> {
                 let (tag, member) = match self {
-                    #(Self::#idents(member) => (#indexes, ::duckdb_neo::ToValue::value(member, link)?),)*
+                    #(Self::#idents(member) => (#indexes, ::haybarn_neo::ToValue::value(member, link)?),)*
                 };
-                ::duckdb_neo::__derive::union_value(
+                ::haybarn_neo::__derive::union_value(
                     link,
-                    &<Self as ::duckdb_neo::DuckDBType>::logical_type(link)?,
+                    &<Self as ::haybarn_neo::DuckDBType>::logical_type(link)?,
                     tag,
                     member,
                 )
@@ -179,7 +179,7 @@ fn to_value(input: &syn::DeriveInput, variants: &UnionVariants<'_>) -> TokenStre
 
 fn from_value(input: &syn::DeriveInput, variants: &UnionVariants<'_>) -> TokenStream {
     let decoded_types = variants.inner_types();
-    let generics = bounded_generics(input, &decoded_types, &syn::parse_quote!(::duckdb_neo::FromValue));
+    let generics = bounded_generics(input, &decoded_types, &syn::parse_quote!(::haybarn_neo::FromValue));
     let arms = variants
         .idents
         .iter()
@@ -189,11 +189,11 @@ fn from_value(input: &syn::DeriveInput, variants: &UnionVariants<'_>) -> TokenSt
         .map(|(index, ((ident, ty), name))| {
             let optional_type = option_inner_type(ty);
             let decoded_type = optional_type.unwrap_or(ty);
-            let decode = quote!(<#decoded_type as ::duckdb_neo::FromValue>::from_value(&member)?);
+            let decode = quote!(<#decoded_type as ::haybarn_neo::FromValue>::from_value(&member)?);
             let decode = if optional_type.is_some() {
                 decode
             } else {
-                quote!(::duckdb_neo::__derive::required_member(#decode, #name)?)
+                quote!(::haybarn_neo::__derive::required_member(#decode, #name)?)
             };
             quote!(#index => Self::#ident(#decode))
         });
@@ -202,9 +202,9 @@ fn from_value(input: &syn::DeriveInput, variants: &UnionVariants<'_>) -> TokenSt
     let (impl_generics, type_generics, where_clause) = generics.split_for_impl();
 
     quote! {
-        impl #impl_generics ::duckdb_neo::FromValue for #ident #type_generics #where_clause {
-            fn _get_inner(value: &::duckdb_neo::value::Value) -> ::duckdb_neo::Result<Self> {
-                let (tag, member) = ::duckdb_neo::__derive::union_member(value, &[#(#names),*])?;
+        impl #impl_generics ::haybarn_neo::FromValue for #ident #type_generics #where_clause {
+            fn _get_inner(value: &::haybarn_neo::value::Value) -> ::haybarn_neo::Result<Self> {
+                let (tag, member) = ::haybarn_neo::__derive::union_member(value, &[#(#names),*])?;
                 ::core::result::Result::Ok(match tag {
                     #(#arms,)*
                     _ => ::core::unreachable!("union_member returns the index of a declared member"),
@@ -224,11 +224,11 @@ fn union_native(input: &syn::DeriveInput, variants: &UnionVariants<'_>) -> Token
         &types,
         quote!(Union),
         quote! {
-            if !::duckdb_neo::__derive::validate_union_layout(other, children, #count)? {
+            if !::haybarn_neo::__derive::validate_union_layout(other, children, #count)? {
                 return ::core::result::Result::Ok(false);
             }
             #(
-                if !::duckdb_neo::__derive::validate_union_member::<#types>(other, children, #indexes, #names)? {
+                if !::haybarn_neo::__derive::validate_union_member::<#types>(other, children, #indexes, #names)? {
                     return ::core::result::Result::Ok(false);
                 }
             )*
@@ -275,7 +275,7 @@ fn union_rows(
         let ref_doc = format!("One [`{ident}`] row read by [`{reader_ident}`]; each member value is nullable.");
         let lifetime = fresh_lifetime(input, "__duckdb_reader");
         let item_lifetime = fresh_lifetime(input, "__duckdb_item");
-        let bound: syn::Path = syn::parse_quote!(::duckdb_neo::vector::WithReader);
+        let bound: syn::Path = syn::parse_quote!(::haybarn_neo::vector::WithReader);
         let generics = with_lifetime(&input.generics, &types, &lifetime, &bound);
         let (impl_generics, reader_generics, where_clause) = generics.split_for_impl();
         let element_generics = bounded_generics(input, &types, &bound);
@@ -291,19 +291,19 @@ fn union_rows(
 
             #[doc = #reader_doc]
             #vis struct #reader_ident #generics #where_clause {
-                inner: ::duckdb_neo::vector::UnionReader<#lifetime, #members>,
+                inner: ::haybarn_neo::vector::UnionReader<#lifetime, #members>,
             }
 
             impl #impl_generics #reader_ident #reader_generics #where_clause {
                 /// Prepare a reader for `vector`.
                 pub fn new(
-                    vector: &#lifetime ::duckdb_neo::vector::Vector<#lifetime, #ident #type_generics>,
-                ) -> ::duckdb_neo::Result<Self> {
+                    vector: &#lifetime ::haybarn_neo::vector::Vector<#lifetime, #ident #type_generics>,
+                ) -> ::haybarn_neo::Result<Self> {
                     ::core::result::Result::Ok(Self { inner: vector.union_reader()? })
                 }
 
                 /// Borrow the untyped union reader, for columnar reads of the tags and members.
-                pub fn members(&self) -> &::duckdb_neo::vector::UnionReader<#lifetime, #members> {
+                pub fn members(&self) -> &::haybarn_neo::vector::UnionReader<#lifetime, #members> {
                     &self.inner
                 }
             }
@@ -314,16 +314,16 @@ fn union_rows(
                 }
             }
 
-            impl #impl_generics ::duckdb_neo::vector::RowReader for #reader_ident #reader_generics #where_clause {
+            impl #impl_generics ::haybarn_neo::vector::RowReader for #reader_ident #reader_generics #where_clause {
                 type Item<#item_lifetime> = #ref_ident<
-                    #(<<#types as #bound>::Reader<#lifetime> as ::duckdb_neo::vector::RowReader>::Item<#item_lifetime>),*
+                    #(<<#types as #bound>::Reader<#lifetime> as ::haybarn_neo::vector::RowReader>::Item<#item_lifetime>),*
                 > where Self: #item_lifetime;
 
                 fn len(&self) -> ::core::primitive::usize {
                     self.inner.len()
                 }
 
-                fn is_null(&self, row: ::core::primitive::usize) -> ::duckdb_neo::Result<::core::primitive::bool> {
+                fn is_null(&self, row: ::core::primitive::usize) -> ::haybarn_neo::Result<::core::primitive::bool> {
                     ::core::result::Result::Ok(self.inner.tag(row)?.is_none())
                 }
 
@@ -334,9 +334,9 @@ fn union_rows(
                     unsafe {
                         ::core::option::Option::Some(match self.inner.tag_unchecked(row)? {
                             #(#tags => #ref_ident::#idents(
-                                ::duckdb_neo::__derive::get_unchecked(self.inner.member::<#indexes>(), row)
+                                ::haybarn_neo::__derive::get_unchecked(self.inner.member::<#indexes>(), row)
                             ),)*
-                            tag => ::duckdb_neo::__derive::invalid_union_tag(::core::option::Option::Some(&tag), #count),
+                            tag => ::haybarn_neo::__derive::invalid_union_tag(::core::option::Option::Some(&tag), #count),
                         })
                     }
                 }
@@ -346,8 +346,8 @@ fn union_rows(
                 type Reader<#lifetime> = #reader_ident #reader_generics where Self: #lifetime;
 
                 fn row_reader<#lifetime>(
-                    vector: &#lifetime ::duckdb_neo::vector::Vector<#lifetime, Self>,
-                ) -> ::duckdb_neo::Result<Self::Reader<#lifetime>> {
+                    vector: &#lifetime ::haybarn_neo::vector::Vector<#lifetime, Self>,
+                ) -> ::haybarn_neo::Result<Self::Reader<#lifetime>> {
                     #reader_ident::new(vector)
                 }
             }
@@ -360,8 +360,8 @@ fn union_rows(
             "Writes [`{ident}`] rows, with every member writer prepared once; each variant's method makes it a row's active member."
         );
         let lifetime = fresh_lifetime(input, "__duckdb_writer");
-        let bound: syn::Path = syn::parse_quote!(::duckdb_neo::vector::WithWriter);
-        let row_writer: syn::Path = syn::parse_quote!(::duckdb_neo::vector::RowWriter);
+        let bound: syn::Path = syn::parse_quote!(::haybarn_neo::vector::WithWriter);
+        let row_writer: syn::Path = syn::parse_quote!(::haybarn_neo::vector::RowWriter);
         let generics = with_lifetime(&input.generics, &types, &lifetime, &bound);
         let (impl_generics, writer_generics, where_clause) = generics.split_for_impl();
         let mut row_generics = generics.clone();
@@ -395,7 +395,7 @@ fn union_rows(
                 pub fn #method(
                     &mut self,
                     row: ::core::primitive::usize,
-                ) -> ::duckdb_neo::Result<&mut <#ty as #bound>::Writer<#lifetime>> {
+                ) -> ::haybarn_neo::Result<&mut <#ty as #bound>::Writer<#lifetime>> {
                     self.inner.member::<#index>(row)
                 }
             });
@@ -413,14 +413,14 @@ fn union_rows(
         output.extend(quote! {
             #[doc = #writer_doc]
             #vis struct #writer_ident #generics #where_clause {
-                inner: ::duckdb_neo::vector::UnionWriter<#lifetime, #members>,
+                inner: ::haybarn_neo::vector::UnionWriter<#lifetime, #members>,
             }
 
             impl #impl_generics #writer_ident #writer_generics #where_clause {
                 #(#methods)*
 
                 /// Borrow the untyped union writer, for columnar writes of the members.
-                pub fn members(&mut self) -> &mut ::duckdb_neo::vector::UnionWriter<#lifetime, #members> {
+                pub fn members(&mut self) -> &mut ::haybarn_neo::vector::UnionWriter<#lifetime, #members> {
                     &mut self.inner
                 }
             }
@@ -439,22 +439,22 @@ fn union_rows(
                 }
 
                 #[inline]
-                fn set(&mut self, row: ::core::primitive::usize, value: &Self::Value) -> ::duckdb_neo::Result<()> {
+                fn set(&mut self, row: ::core::primitive::usize, value: &Self::Value) -> ::haybarn_neo::Result<()> {
                     match value {
                         #(#writes,)*
                     }
                 }
 
-                fn set_null(&mut self, row: ::core::primitive::usize) -> ::duckdb_neo::Result<()> {
+                fn set_null(&mut self, row: ::core::primitive::usize) -> ::haybarn_neo::Result<()> {
                     self.inner.set_null(row)
                 }
 
-                unsafe fn resize_rows(&mut self, len: ::core::primitive::usize) -> ::duckdb_neo::Result<()> {
+                unsafe fn resize_rows(&mut self, len: ::core::primitive::usize) -> ::haybarn_neo::Result<()> {
                     // SAFETY: the caller upholds the contract.
                     unsafe { self.inner.resize_rows(len) }
                 }
 
-                fn refresh(&mut self) -> ::duckdb_neo::Result<()> {
+                fn refresh(&mut self) -> ::haybarn_neo::Result<()> {
                     self.inner.refresh()
                 }
             }
@@ -464,11 +464,11 @@ fn union_rows(
                 type Writer<#lifetime> = #writer_ident #writer_generics where Self: #lifetime;
 
                 unsafe fn row_writer<#lifetime>(
-                    vector: ::core::ptr::NonNull<::duckdb_neo::vector::Vector<#lifetime, Self>>,
-                ) -> ::duckdb_neo::Result<Self::Writer<#lifetime>> {
+                    vector: ::core::ptr::NonNull<::haybarn_neo::vector::Vector<#lifetime, Self>>,
+                ) -> ::haybarn_neo::Result<Self::Writer<#lifetime>> {
                     // SAFETY: the caller upholds the borrow contract.
                     ::core::result::Result::Ok(#writer_ident {
-                        inner: unsafe { ::duckdb_neo::vector::UnionWriter::from_raw(vector.cast())? },
+                        inner: unsafe { ::haybarn_neo::vector::UnionWriter::from_raw(vector.cast())? },
                     })
                 }
             }

@@ -42,7 +42,7 @@ impl EnumStorage for u32 {
 /// Writes check the index against the vector's dictionary.
 ///
 /// ```
-/// # use duckdb_neo::{Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, logical_type::LogicalType, types::EnumIndex};
+/// # use haybarn_neo::{Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, logical_type::LogicalType, types::EnumIndex};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let mood = LogicalType::from_text(&conn, "ENUM('sad', 'happy')")?;

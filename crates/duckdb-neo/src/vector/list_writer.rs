@@ -13,7 +13,7 @@ use crate::{Result, error::Error, types::List, types::ListIndex};
 /// overwrites the elements of the rows the first one wrote.
 ///
 /// ```
-/// # use duckdb_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::List};
+/// # use haybarn_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::List};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let mut chunk = DataChunk::create(&conn, &[List::<i32>::logical_type(&conn)?], true)?;
@@ -33,7 +33,7 @@ use crate::{Result, error::Error, types::List, types::ListIndex};
 /// against the child's size:
 ///
 /// ```
-/// # use duckdb_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::{List, ListIndex}};
+/// # use haybarn_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::{List, ListIndex}};
 /// # fn main() -> Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// # let mut chunk = DataChunk::create(&conn, &[List::<i32>::logical_type(&conn)?], true)?;

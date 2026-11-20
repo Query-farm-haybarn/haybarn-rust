@@ -2,7 +2,7 @@
 
 use std::{cell::OnceCell, marker::PhantomData};
 
-use duckdb_loadable_macros::AsRaw;
+use haybarn_loadable_macros::AsRaw;
 
 /// Counts of positional fixed, `*args`, named-only, and `**kwargs` arguments, in that order.
 pub use crate::builder_helpers::ArgCount as ArgumentCounts;

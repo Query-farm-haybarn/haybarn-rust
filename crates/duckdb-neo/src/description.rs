@@ -54,11 +54,11 @@ impl ColumnDescription {
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::{Parameters, environment::{Environment, StorageLocation}};
-/// use duckdb_neo::qualified_name::QualifiedName;
-/// use duckdb_neo::description::TableDescription;
+/// use haybarn_neo::{Parameters, environment::{Environment, StorageLocation}};
+/// use haybarn_neo::qualified_name::QualifiedName;
+/// use haybarn_neo::description::TableDescription;
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let env = Environment::new()?;
 /// let instance = env.open(StorageLocation::InMemory)?;
 /// let conn = instance.connect()?;

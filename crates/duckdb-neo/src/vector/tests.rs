@@ -1,4 +1,4 @@
-use duckdb_loadable_macros::AsDuckDB;
+use haybarn_loadable_macros::AsDuckDB;
 
 use crate::logical_type::LogicalTypeID;
 use crate::scalar::MicroScalar;

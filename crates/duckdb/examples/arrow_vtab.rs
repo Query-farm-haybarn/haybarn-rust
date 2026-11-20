@@ -4,7 +4,7 @@
 
 use std::{error::Error, sync::Arc};
 
-use duckdb::{
+use haybarn::{
     Connection,
     arrow::{
         array::{ArrayRef, BooleanArray, Int32Array, StringArray},

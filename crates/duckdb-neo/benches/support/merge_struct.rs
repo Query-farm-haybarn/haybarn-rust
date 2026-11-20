@@ -1,7 +1,7 @@
 //! `merge_struct(i, s, m, u, d)`: packs an `INTEGER`, `VARCHAR`, `MAP`, `UNION` and `DECIMAL`
 //! into one `STRUCT`, keeping each argument's NULLs in its field.
 
-use duckdb_neo::{
+use haybarn_neo::{
     AsDuckDBUnion, Error, Parameters, Result,
     connection::{Connection, Context},
     data_chunk::VectorCollection,

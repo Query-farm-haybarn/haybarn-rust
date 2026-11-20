@@ -91,7 +91,7 @@ unsafe fn init_extension_api(input: &ffi::duckdb_v2_extension_input, _version: &
 /// resolves to it.
 ///
 /// `describe` is the `duckdb_extension_<name>_describe` function that
-/// [`#[duckdb_entrypoint_c_api_v2]`](duckdb_loadable_macros::duckdb_entrypoint_c_api_v2) emits. Registering the same
+/// [`#[duckdb_entrypoint_c_api_v2]`](haybarn_loadable_macros::duckdb_entrypoint_c_api_v2) emits. Registering the same
 /// function again is a no-op. Instances that are already open are unaffected.
 ///
 /// # Errors
@@ -198,7 +198,7 @@ macro_rules! __describe_static_extension {
 macro_rules! __describe_static_extension {
     ($($tokens:tt)*) => {
         compile_error!(
-            "`#[duckdb_entrypoint_c_api_v2]` needs duckdb-neo's `build-extension` or `build-extension-static` feature"
+            "`#[duckdb_entrypoint_c_api_v2]` needs haybarn-neo's `build-extension` or `build-extension-static` feature"
         );
     };
 }

@@ -128,7 +128,7 @@ pub mod derive_support {
 
 #[cfg(test)]
 mod tests {
-    use duckdb_loadable_macros::{AsDuckDBType, AsFromValue, AsToValue};
+    use haybarn_loadable_macros::{AsDuckDBType, AsFromValue, AsToValue};
 
     use super::*;
     use crate::{
@@ -170,7 +170,7 @@ mod tests {
     }
 
     mod derived_types {
-        use duckdb_loadable_macros::{AsDuckDBType, AsFromValue, AsToValue};
+        use haybarn_loadable_macros::{AsDuckDBType, AsFromValue, AsToValue};
 
         use crate::types::List;
 

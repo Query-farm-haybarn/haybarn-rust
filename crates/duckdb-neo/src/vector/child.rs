@@ -19,10 +19,10 @@ use crate::{
 /// `LIST` and `MAP` elements with `set_child_size`:
 ///
 /// ```compile_fail,E0596
-/// # use duckdb_neo::{AsDuckDB, DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
+/// # use haybarn_neo::{AsDuckDB, DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
 /// # #[derive(AsDuckDB)]
 /// # struct Row { x: i64 }
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let mut chunk = DataChunk::create(&conn, &[Row::logical_type(&conn)?], true)?;
 /// let mut rows = chunk.get_vector_at_mut::<Row>(0)?;
@@ -35,10 +35,10 @@ use crate::{
 /// Operations that replace a child's storage are unavailable as well:
 ///
 /// ```compile_fail,E0507
-/// # use duckdb_neo::{AsDuckDB, DuckDBType, ToValue, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
+/// # use haybarn_neo::{AsDuckDB, DuckDBType, ToValue, data_chunk::DataChunk, environment::{Environment, StorageLocation}};
 /// # #[derive(AsDuckDB)]
 /// # struct Row { x: i64 }
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let mut chunk = DataChunk::create(&conn, &[Row::logical_type(&conn)?], true)?;
 /// let mut rows = chunk.get_vector_at_mut::<Row>(0)?;
@@ -51,10 +51,10 @@ use crate::{
 /// Neither can a child's row writer resize it:
 ///
 /// ```compile_fail,E0133
-/// # use duckdb_neo::{AsDuckDB, DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}, vector::RowWriter};
+/// # use haybarn_neo::{AsDuckDB, DuckDBType, data_chunk::DataChunk, environment::{Environment, StorageLocation}, vector::RowWriter};
 /// # #[derive(AsDuckDB)]
 /// # struct Row { x: i64 }
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 /// let mut chunk = DataChunk::create(&conn, &[Row::logical_type(&conn)?], true)?;
 /// let mut rows = chunk.get_vector_at_mut::<Row>(0)?;

@@ -1,11 +1,11 @@
 //! Escape hatches to and from the raw C API handles behind the wrappers.
 //!
-//! Use these to call `libduckdb_sys::v2` functions that this crate does not wrap yet.
+//! Use these to call `libhaybarn_sys::v2` functions that this crate does not wrap yet.
 //!
 //! ```
-//! use duckdb_neo::{AsRaw, FromRaw, ToValue, environment::{Environment, StorageLocation}, value::Value};
+//! use haybarn_neo::{AsRaw, FromRaw, ToValue, environment::{Environment, StorageLocation}, value::Value};
 //!
-//! # fn main() -> duckdb_neo::Result<()> {
+//! # fn main() -> haybarn_neo::Result<()> {
 //! let env = Environment::new()?;
 //! let conn = env.open(StorageLocation::InMemory)?.connect()?;
 //!
@@ -24,8 +24,8 @@
 //! Wrappers no longer dereference to their handle, and reading it requires `unsafe`:
 //!
 //! ```compile_fail,E0133
-//! # use duckdb_neo::{AsRaw, environment::{Environment, StorageLocation}};
-//! # fn main() -> duckdb_neo::Result<()> {
+//! # use haybarn_neo::{AsRaw, environment::{Environment, StorageLocation}};
+//! # fn main() -> haybarn_neo::Result<()> {
 //! # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 //! let raw = conn.get_raw();
 //! # Ok(())
@@ -33,8 +33,8 @@
 //! ```
 //!
 //! ```compile_fail,E0614
-//! # use duckdb_neo::environment::{Environment, StorageLocation};
-//! # fn main() -> duckdb_neo::Result<()> {
+//! # use haybarn_neo::environment::{Environment, StorageLocation};
+//! # fn main() -> haybarn_neo::Result<()> {
 //! # let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;
 //! let raw = *conn;
 //! # Ok(())

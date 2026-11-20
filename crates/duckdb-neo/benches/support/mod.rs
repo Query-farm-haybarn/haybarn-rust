@@ -12,7 +12,7 @@ pub mod merge_struct;
 pub mod nulls;
 pub mod row_hash;
 
-use duckdb_neo::{
+use haybarn_neo::{
     Error, Parameters, Result,
     connection::Connection,
     environment::{Environment, StorageLocation},

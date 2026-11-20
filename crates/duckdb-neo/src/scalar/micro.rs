@@ -22,14 +22,14 @@ use crate::{
 /// initialization remain available through [`ScalarCallbacks`] instead.
 ///
 /// ```
-/// use duckdb_neo::{
+/// use haybarn_neo::{
 ///     Parameters,
 ///     environment::{Environment, StorageLocation},
 ///     scalar::MicroScalar,
 ///     vector::Vector,
 /// };
 ///
-/// # fn main() -> duckdb_neo::Result<()> {
+/// # fn main() -> haybarn_neo::Result<()> {
 /// let function = MicroScalar::create(
 ///     "plus_one",
 ///     |_ctx, input: Vector<'_, i32>, mut output: Vector<'_, i64>| {

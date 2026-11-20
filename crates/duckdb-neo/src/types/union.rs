@@ -19,7 +19,7 @@ use crate::{
 /// [`Vector::write_value_slow`](crate::vector::Vector::write_value_slow) when the schema is only known at runtime.
 ///
 /// ```
-/// use duckdb_neo::{AsDuckDBUnion, Result, vector::{RowReader, RowWriter, Vector}};
+/// use haybarn_neo::{AsDuckDBUnion, Result, vector::{RowReader, RowWriter, Vector}};
 ///
 /// #[derive(AsDuckDBUnion)]
 /// #[duckdb(reader, writer)]
@@ -201,7 +201,7 @@ pub mod derive_support {
 
 #[cfg(test)]
 mod tests {
-    use duckdb_loadable_macros::AsDuckDBUnion;
+    use haybarn_loadable_macros::AsDuckDBUnion;
 
     use super::*;
     use crate::{

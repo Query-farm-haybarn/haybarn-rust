@@ -3,7 +3,7 @@
 
 use std::sync::Mutex;
 
-use duckdb_neo::{
+use haybarn_neo::{
     DuckDBType, Error, Parameters, Result,
     bind_arguments::BindArguments,
     connection::{Connection, Context},

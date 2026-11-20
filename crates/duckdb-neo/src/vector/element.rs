@@ -16,7 +16,7 @@ use crate::{
 /// Derive `AsDuckDB` with `#[duckdb(reader, writer)]` for named struct readers and writers:
 ///
 /// ```
-/// use duckdb_neo::{AsDuckDB, Result, vector::{RowReader, Vector}};
+/// use haybarn_neo::{AsDuckDB, Result, vector::{RowReader, Vector}};
 ///
 /// #[derive(AsDuckDB)]
 /// #[duckdb(reader)]
@@ -33,7 +33,7 @@ use crate::{
 /// Field readers are borrowed through accessors, so a reader cannot be paired with another vector's:
 ///
 /// ```compile_fail,E0615
-/// use duckdb_neo::{AsDuckDB, Result, vector::{RowReader, Vector}};
+/// use haybarn_neo::{AsDuckDB, Result, vector::{RowReader, Vector}};
 ///
 /// #[derive(AsDuckDB)]
 /// #[duckdb(reader)]
@@ -51,7 +51,7 @@ use crate::{
 /// Readers borrow the vector and prevent mutation while in use:
 ///
 /// ```compile_fail,E0502
-/// use duckdb_neo::{AsDuckDB, Result, vector::{RowReader, Vector}};
+/// use haybarn_neo::{AsDuckDB, Result, vector::{RowReader, Vector}};
 ///
 /// #[derive(AsDuckDB)]
 /// #[duckdb(reader)]
@@ -76,7 +76,7 @@ use crate::{
 /// A safe implementation is rejected:
 ///
 /// ```compile_fail,E0200
-/// # use duckdb_neo::{logical_type::LogicalTypeID, vector::NativeElement};
+/// # use haybarn_neo::{logical_type::LogicalTypeID, vector::NativeElement};
 /// struct Wide([u64; 4]);
 ///
 /// impl NativeElement for Wide {
@@ -124,7 +124,7 @@ pub unsafe trait ReadableNativeElement: NativeElement {
     /// - `logical` must be a row of `reader`, `physical` its physical index, and the row must not be `NULL`.
     ///
     /// ```compile_fail,E0133
-    /// # use duckdb_neo::vector::{Vector, ReadableNativeElement};
+    /// # use haybarn_neo::vector::{Vector, ReadableNativeElement};
     /// fn read<'a>(vector: &'a Vector<'_, i8>) -> &'a i64 {
     ///     let reader = vector.reader().unwrap();
     ///     <i64 as ReadableNativeElement>::get(&reader, 10_000, 0)
@@ -144,9 +144,9 @@ pub unsafe trait ReadableNativeElement: NativeElement {
 /// Non-byte vectors do not expose an arena:
 ///
 /// ```compile_fail,E0599
-/// use duckdb_neo::vector::Vector;
+/// use haybarn_neo::vector::Vector;
 ///
-/// fn arena(vector: &mut Vector<'_, i32>) -> duckdb_neo::Result<()> {
+/// fn arena(vector: &mut Vector<'_, i32>) -> haybarn_neo::Result<()> {
 ///     let _ = vector.writer()?.arena();
 ///     Ok(())
 /// }
@@ -177,8 +177,8 @@ pub unsafe trait WritableNativeElement: NativeElement {
     /// - `index` must be less than [`VectorWriter::len`].
     ///
     /// ```compile_fail,E0133
-    /// # use duckdb_neo::vector::{Vector, WritableNativeElement};
-    /// fn write(vector: &mut Vector<'_, i32>) -> duckdb_neo::Result<()> {
+    /// # use haybarn_neo::vector::{Vector, WritableNativeElement};
+    /// fn write(vector: &mut Vector<'_, i32>) -> haybarn_neo::Result<()> {
     ///     <i32 as WritableNativeElement>::write(&mut vector.writer()?, 0, &1)
     /// }
     /// ```

@@ -37,7 +37,7 @@ fn list_vector_state_result(state: duckdb_state, action: &str, size: usize) -> R
 /// Regression guard for #673 — a `ListVector` must not outlive its parent chunk:
 ///
 /// ```compile_fail
-/// use duckdb::core::{DataChunkHandle, LogicalTypeHandle, LogicalTypeId};
+/// use haybarn::core::{DataChunkHandle, LogicalTypeHandle, LogicalTypeId};
 ///
 /// let vec;
 /// {

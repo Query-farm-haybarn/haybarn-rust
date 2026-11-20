@@ -1,6 +1,6 @@
 //! Deterministic, independently salted NULL patterns shared by the function benchmark ports.
 
-use duckdb_neo::{Error, Result};
+use haybarn_neo::{Error, Result};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Nulls(u8);

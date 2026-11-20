@@ -4,7 +4,7 @@
 
 use std::collections::HashMap;
 
-use duckdb_neo::{
+use haybarn_neo::{
     DuckDBType, Error, Parameters, Result,
     aggregate::{AggregateCallbacks, AggregateFunctionBuilder, ReturnTypeHandle, States},
     bind_arguments::BindArguments,

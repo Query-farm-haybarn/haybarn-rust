@@ -24,7 +24,7 @@ pub struct QualifiedNameView {
 ///
 /// # Example
 /// ```
-/// use duckdb_neo::qualified_name::QualifiedName;
+/// use haybarn_neo::qualified_name::QualifiedName;
 ///
 /// let name = QualifiedName::from_parts(&["main", "events"]).unwrap();
 ///

@@ -149,7 +149,7 @@ decimal_widths! {
 /// are different types and their payloads are not interchangeable.
 ///
 /// ```
-/// use duckdb_neo::types::Decimal;
+/// use haybarn_neo::types::Decimal;
 ///
 /// let price = Decimal::<5, 2>::new(12_345); // 123.45, stored as i32
 /// assert_eq!(price.0, 12_345i32);
@@ -158,7 +158,7 @@ decimal_widths! {
 /// `Decimal::new` with a scale above the width does not compile:
 ///
 /// ```compile_fail
-/// let _ = duckdb_neo::types::Decimal::<2, 3>::new(1);
+/// let _ = haybarn_neo::types::Decimal::<2, 3>::new(1);
 /// ```
 ///
 /// Vector slots are at most 8-byte aligned, so the field can be copied but not borrowed.

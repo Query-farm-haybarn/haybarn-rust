@@ -15,7 +15,7 @@ use std::{
     },
 };
 
-use duckdb_neo::{
+use haybarn_neo::{
     Error, Parameters, Result,
     column_data_collection::ColumnDataCollection,
     connection::{Connection, Context},

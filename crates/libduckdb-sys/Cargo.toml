@@ -1,5 +1,5 @@
 [package]
-name = "libduckdb-sys"
+name = "libhaybarn-sys"
 version = { workspace = true }
 authors = { workspace = true }
 license = { workspace = true }
@@ -8,14 +8,16 @@ homepage = { workspace = true }
 keywords = { workspace = true }
 readme = { workspace = true }
 build = "build.rs"
-# `links = "duckdb"` lets the build script publish metadata
+# `links = "haybarn"` lets the build script publish metadata
 # (`cargo:include`, `cargo:lib_dir`) that downstream crates can read
-# via `DEP_DUCKDB_*` environment variables in their own build scripts.
+# via `DEP_HAYBARN_*` environment variables in their own build scripts.
 # Required for crates that need to compile their own C/C++ code that
 # `#include "duckdb.hpp"` against the bundled headers.
-links = "duckdb"
+# Renamed from "duckdb" so this crate can coexist in a dependency graph
+# with the upstream `libduckdb-sys` (Cargo requires `links` values be unique).
+links = "haybarn"
 categories = ["external-ffi-bindings", "database"]
-description = "Native bindings to the libduckdb library, C API"
+description = "Native bindings to the Haybarn engine (a derived distribution of DuckDB, powered by DuckDB), C API"
 exclude = ["duckdb-sources"]
 edition = { workspace = true }
 rust-version = { workspace = true }

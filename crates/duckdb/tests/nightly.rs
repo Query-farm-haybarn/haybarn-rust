@@ -1,4 +1,4 @@
-use duckdb::{Config, Connection, OptionalExt};
+use haybarn::{Config, Connection, OptionalExt};
 
 const MIN_DUCKDB_SOURCE_ID_LEN: usize = 7;
 

@@ -52,7 +52,7 @@ impl ListIndex {
 /// writes whole rows into the sized child instead:
 ///
 /// ```
-/// use duckdb_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::List, vector::RowWriter};
+/// use haybarn_neo::{DuckDBType, Result, data_chunk::DataChunk, environment::{Environment, StorageLocation}, types::List, vector::RowWriter};
 ///
 /// # fn main() -> Result<()> {
 /// let conn = Environment::new()?.open(StorageLocation::InMemory)?.connect()?;

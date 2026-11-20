@@ -3,7 +3,7 @@ use std::sync::{
     atomic::{AtomicUsize, Ordering},
 };
 
-use duckdb_neo::{
+use haybarn_neo::{
     AsDuckDB, AsDuckDBUnion, DuckDBType, Parameters, Result, ToValue,
     connection::{Connection, Context},
     data_chunk::{DataChunk, VectorCollection},
@@ -84,7 +84,7 @@ fn connect() -> Result<Connection> {
     Environment::new()?.open(StorageLocation::InMemory)?.connect()
 }
 
-fn single_value(conn: &Connection, sql: &str) -> Result<duckdb_neo::value::Value> {
+fn single_value(conn: &Connection, sql: &str) -> Result<haybarn_neo::value::Value> {
     conn.query(sql, Parameters::None)?
         .next_chunk()?
         .unwrap()
@@ -128,7 +128,7 @@ fn derived_union_logical_types() -> Result<()> {
 #[test]
 fn derived_union_values_roundtrip() -> Result<()> {
     let conn = connect()?;
-    fn roundtrip<T: DuckDBType + ToValue + duckdb_neo::FromValue + PartialEq + std::fmt::Debug>(
+    fn roundtrip<T: DuckDBType + ToValue + haybarn_neo::FromValue + PartialEq + std::fmt::Debug>(
         conn: &Connection,
         input: T,
         tag: &str,

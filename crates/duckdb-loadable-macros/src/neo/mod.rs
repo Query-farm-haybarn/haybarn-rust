@@ -1,4 +1,4 @@
-//! Derives for `duckdb-neo`'s value, vector, and raw handle traits.
+//! Derives for `haybarn-neo`'s value, vector, and raw handle traits.
 
 use proc_macro::TokenStream;
 use syn::spanned::Spanned;
@@ -77,7 +77,7 @@ pub(crate) fn derive_as_raw(input: syn::DeriveInput) -> TokenStream {
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     quote::quote! {
-        impl #impl_generics ::duckdb_neo::AsRaw for #name #ty_generics #where_clause {
+        impl #impl_generics ::haybarn_neo::AsRaw for #name #ty_generics #where_clause {
             type Raw = #ty;
 
             unsafe fn get_raw(&self) -> Self::Raw {
@@ -104,7 +104,7 @@ pub(crate) fn derive_from_raw(input: syn::DeriveInput) -> TokenStream {
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     quote::quote! {
-        impl #impl_generics ::duckdb_neo::FromRaw for #name #ty_generics #where_clause {
+        impl #impl_generics ::haybarn_neo::FromRaw for #name #ty_generics #where_clause {
             unsafe fn from_raw(raw: Self::Raw) -> Self {
                 Self {
                     #member: raw,
@@ -140,7 +140,7 @@ pub(crate) fn derive_drop_handle(input: syn::DeriveInput) -> TokenStream {
                 // SAFETY: the wrapper owns the handle, and nothing uses it after drop.
                 let code = unsafe { #destroy(&mut self.#member) };
                 assert!(
-                    code == ::duckdb_neo::ffi::DUCKDB_V2_ERROR::DUCKDB_V2_ERROR_NONE,
+                    code == ::haybarn_neo::ffi::DUCKDB_V2_ERROR::DUCKDB_V2_ERROR_NONE,
                     "Failed to destroy {}: {:?}",
                     stringify!(#name),
                     code,

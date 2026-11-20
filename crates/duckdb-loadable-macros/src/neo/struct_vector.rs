@@ -51,7 +51,7 @@ pub(super) fn native_impls(
     validate: TokenStream,
 ) -> TokenStream {
     let ident = &input.ident;
-    let bound: syn::Path = syn::parse_quote!(::duckdb_neo::vector::NativeElement);
+    let bound: syn::Path = syn::parse_quote!(::haybarn_neo::vector::NativeElement);
     let generics = bounded_generics(input, types, &bound);
     let (impl_generics, type_generics, where_clause) = generics.split_for_impl();
     let lifetime = row_lifetime(input);
@@ -59,48 +59,48 @@ pub(super) fn native_impls(
     quote! {
         // SAFETY: there is no physical row data, and validation checks the ordered child schema.
         unsafe impl #impl_generics #bound for #ident #type_generics #where_clause {
-            const TYPE_ID: ::duckdb_neo::logical_type::LogicalTypeID = ::duckdb_neo::logical_type::LogicalTypeID::#type_id;
+            const TYPE_ID: ::haybarn_neo::logical_type::LogicalTypeID = ::haybarn_neo::logical_type::LogicalTypeID::#type_id;
             type Native<#lifetime> = ();
 
             fn validate(
-                other: &::duckdb_neo::logical_type::LogicalType,
-                children: ::core::option::Option<&::duckdb_neo::data_chunk::VectorCollection>,
-            ) -> ::duckdb_neo::Result<::core::primitive::bool> {
+                other: &::haybarn_neo::logical_type::LogicalType,
+                children: ::core::option::Option<&::haybarn_neo::data_chunk::VectorCollection>,
+            ) -> ::haybarn_neo::Result<::core::primitive::bool> {
                 #validate
             }
         }
 
         // SAFETY: `get` reads nothing.
-        unsafe impl #impl_generics ::duckdb_neo::vector::ReadableNativeElement for #ident #type_generics #where_clause {
+        unsafe impl #impl_generics ::haybarn_neo::vector::ReadableNativeElement for #ident #type_generics #where_clause {
             type Ref<#lifetime> = () where Self: #lifetime;
 
             #[inline]
             unsafe fn get<#lifetime, #reader_type: #bound>(
-                _reader: &::duckdb_neo::vector::VectorReader<#lifetime, #reader_type>,
+                _reader: &::haybarn_neo::vector::VectorReader<#lifetime, #reader_type>,
                 _physical: ::core::primitive::usize,
                 _logical: ::core::primitive::usize,
             ) where Self: #lifetime {}
         }
 
         // SAFETY: the children are always initialized, so a valid row needs no data of its own.
-        unsafe impl #impl_generics ::duckdb_neo::vector::WritableNativeElement for #ident #type_generics #where_clause {
+        unsafe impl #impl_generics ::haybarn_neo::vector::WritableNativeElement for #ident #type_generics #where_clause {
             type Write = ();
 
             #[inline]
             unsafe fn write(
-                _writer: &mut ::duckdb_neo::vector::VectorWriter<'_, Self>,
+                _writer: &mut ::haybarn_neo::vector::VectorWriter<'_, Self>,
                 _index: ::core::primitive::usize,
                 _value: &(),
-            ) -> ::duckdb_neo::Result<()> {
+            ) -> ::haybarn_neo::Result<()> {
                 ::core::result::Result::Ok(())
             }
 
             #[inline]
             unsafe fn write_null(
-                writer: &mut ::duckdb_neo::vector::VectorWriter<'_, Self>,
+                writer: &mut ::haybarn_neo::vector::VectorWriter<'_, Self>,
                 index: ::core::primitive::usize,
-            ) -> ::duckdb_neo::Result<()> {
-                ::duckdb_neo::__derive::null_children(writer, index)
+            ) -> ::haybarn_neo::Result<()> {
+                ::haybarn_neo::__derive::null_children(writer, index)
             }
         }
     }
@@ -122,11 +122,11 @@ pub(crate) fn as_native_element(input: &syn::DeriveInput) -> syn::Result<TokenSt
         &types,
         quote!(Struct),
         quote! {
-            if !::duckdb_neo::__derive::validate_layout(other, children, #count)? {
+            if !::haybarn_neo::__derive::validate_layout(other, children, #count)? {
                 return ::core::result::Result::Ok(false);
             }
             #(
-                if !::duckdb_neo::__derive::validate_field::<#types>(other, children, #indexes, #names)? {
+                if !::haybarn_neo::__derive::validate_field::<#types>(other, children, #indexes, #names)? {
                     return ::core::result::Result::Ok(false);
                 }
             )*
@@ -164,7 +164,7 @@ fn struct_rows(
         let ref_doc = format!("One [`{ident}`] row read by [`{reader_ident}`]; every field is nullable.");
         let lifetime = fresh_lifetime(input, "__duckdb_reader");
         let item_lifetime = fresh_lifetime(input, "__duckdb_item");
-        let bound: syn::Path = syn::parse_quote!(::duckdb_neo::vector::WithReader);
+        let bound: syn::Path = syn::parse_quote!(::haybarn_neo::vector::WithReader);
         let generics = with_lifetime(&input.generics, types, &lifetime, &bound);
         let (impl_generics, reader_generics, where_clause) = generics.split_for_impl();
         let element_generics = bounded_generics(input, types, &bound);
@@ -196,8 +196,8 @@ fn struct_rows(
 
             #[doc = #reader_doc]
             #vis struct #reader_ident #generics #where_clause {
-                parts: ::duckdb_neo::__derive::ReaderParts<
-                    ::duckdb_neo::vector::VectorReader<#lifetime, #ident #type_generics>,
+                parts: ::haybarn_neo::__derive::ReaderParts<
+                    ::haybarn_neo::vector::VectorReader<#lifetime, #ident #type_generics>,
                     (#(<#types as #bound>::Reader<#lifetime>,)*),
                 >,
             }
@@ -205,16 +205,16 @@ fn struct_rows(
             impl #impl_generics #reader_ident #reader_generics #where_clause {
                 /// Prepare a reader for `vector`.
                 pub fn new(
-                    vector: &#lifetime ::duckdb_neo::vector::Vector<#lifetime, #ident #type_generics>,
-                ) -> ::duckdb_neo::Result<Self> {
+                    vector: &#lifetime ::haybarn_neo::vector::Vector<#lifetime, #ident #type_generics>,
+                ) -> ::haybarn_neo::Result<Self> {
                     let rows = vector.reader()?;
                     // SAFETY: validation checked every child as its field's type.
                     let fields = (#(unsafe {
-                        ::duckdb_neo::__derive::child_reader::<#ident #type_generics, #types>(vector, #indexes)?
+                        ::haybarn_neo::__derive::child_reader::<#ident #type_generics, #types>(vector, #indexes)?
                     },)*);
                     ::core::result::Result::Ok(Self {
                         // SAFETY: DuckDB sizes every field of a STRUCT like the STRUCT itself.
-                        parts: unsafe { ::duckdb_neo::__derive::ReaderParts::new(rows, fields) },
+                        parts: unsafe { ::haybarn_neo::__derive::ReaderParts::new(rows, fields) },
                     })
                 }
 
@@ -229,32 +229,32 @@ fn struct_rows(
             impl #impl_generics ::core::fmt::Debug for #reader_ident #reader_generics #where_clause {
                 fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                     f.debug_struct(::core::stringify!(#reader_ident))
-                        .field("len", &::duckdb_neo::vector::RowReader::len(self.parts.rows()))
+                        .field("len", &::haybarn_neo::vector::RowReader::len(self.parts.rows()))
                         .finish()
                 }
             }
 
-            impl #impl_generics ::duckdb_neo::vector::RowReader for #reader_ident #reader_generics #where_clause {
+            impl #impl_generics ::haybarn_neo::vector::RowReader for #reader_ident #reader_generics #where_clause {
                 type Item<#item_lifetime> = #ref_ident<
-                    #(<<#types as #bound>::Reader<#lifetime> as ::duckdb_neo::vector::RowReader>::Item<#item_lifetime>),*
+                    #(<<#types as #bound>::Reader<#lifetime> as ::haybarn_neo::vector::RowReader>::Item<#item_lifetime>),*
                 > where Self: #item_lifetime;
 
                 fn len(&self) -> ::core::primitive::usize {
-                    ::duckdb_neo::vector::RowReader::len(self.parts.rows())
+                    ::haybarn_neo::vector::RowReader::len(self.parts.rows())
                 }
 
-                fn is_null(&self, row: ::core::primitive::usize) -> ::duckdb_neo::Result<::core::primitive::bool> {
-                    ::duckdb_neo::vector::RowReader::is_null(self.parts.rows(), row)
+                fn is_null(&self, row: ::core::primitive::usize) -> ::haybarn_neo::Result<::core::primitive::bool> {
+                    ::haybarn_neo::vector::RowReader::is_null(self.parts.rows(), row)
                 }
 
                 #[inline]
                 unsafe fn get_unchecked(&self, row: ::core::primitive::usize) -> ::core::option::Option<Self::Item<'_>> {
                     // SAFETY: the caller guarantees bounds; every field has one row per parent row.
                     unsafe {
-                        ::duckdb_neo::__derive::get_unchecked(self.parts.rows(), row)?;
+                        ::haybarn_neo::__derive::get_unchecked(self.parts.rows(), row)?;
                         let fields = self.parts.fields();
                         ::core::option::Option::Some(#ref_ident {
-                            #(#field_idents: ::duckdb_neo::__derive::get_unchecked(&fields.#field_indexes, row),)*
+                            #(#field_idents: ::haybarn_neo::__derive::get_unchecked(&fields.#field_indexes, row),)*
                         })
                     }
                 }
@@ -264,8 +264,8 @@ fn struct_rows(
                 type Reader<#lifetime> = #reader_ident #reader_generics where Self: #lifetime;
 
                 fn row_reader<#lifetime>(
-                    vector: &#lifetime ::duckdb_neo::vector::Vector<#lifetime, Self>,
-                ) -> ::duckdb_neo::Result<Self::Reader<#lifetime>> {
+                    vector: &#lifetime ::haybarn_neo::vector::Vector<#lifetime, Self>,
+                ) -> ::haybarn_neo::Result<Self::Reader<#lifetime>> {
                     #reader_ident::new(vector)
                 }
             }
@@ -278,8 +278,8 @@ fn struct_rows(
             "Writes [`{ident}`] rows, with every field writer prepared once; the field writers allow columnar writes."
         );
         let lifetime = fresh_lifetime(input, "__duckdb_writer");
-        let bound: syn::Path = syn::parse_quote!(::duckdb_neo::vector::WithWriter);
-        let row_writer: syn::Path = syn::parse_quote!(::duckdb_neo::vector::RowWriter);
+        let bound: syn::Path = syn::parse_quote!(::haybarn_neo::vector::WithWriter);
+        let row_writer: syn::Path = syn::parse_quote!(::haybarn_neo::vector::RowWriter);
         let generics = with_lifetime(&input.generics, types, &lifetime, &bound);
         let (impl_generics, writer_generics, where_clause) = generics.split_for_impl();
         let mut row_generics = generics.clone();
@@ -311,24 +311,24 @@ fn struct_rows(
         output.extend(quote! {
             #[doc = #writer_doc]
             #vis struct #writer_ident #generics #where_clause {
-                rows: ::duckdb_neo::vector::VectorWriter<#lifetime, #ident #type_generics>,
+                rows: ::haybarn_neo::vector::VectorWriter<#lifetime, #ident #type_generics>,
                 #(#field_vis #field_idents: <#types as #bound>::Writer<#lifetime>,)*
             }
 
             impl #impl_generics #writer_ident #writer_generics #where_clause {
                 /// # Safety
-                /// As for [`WithWriter::row_writer`](::duckdb_neo::vector::WithWriter::row_writer).
+                /// As for [`WithWriter::row_writer`](::haybarn_neo::vector::WithWriter::row_writer).
                 #[doc(hidden)]
                 pub unsafe fn from_raw(
-                    vector: ::core::ptr::NonNull<::duckdb_neo::vector::Vector<#lifetime, #ident #type_generics>>,
-                ) -> ::duckdb_neo::Result<Self> {
+                    vector: ::core::ptr::NonNull<::haybarn_neo::vector::Vector<#lifetime, #ident #type_generics>>,
+                ) -> ::haybarn_neo::Result<Self> {
                     // SAFETY: the caller upholds the borrow contract; validation checked every field's type,
                     // and the field writers touch disjoint children.
                     unsafe {
-                        let children = ::duckdb_neo::__derive::children(vector)?;
+                        let children = ::haybarn_neo::__derive::children(vector)?;
                         ::core::result::Result::Ok(Self {
-                            rows: ::duckdb_neo::__derive::vector_writer(vector)?,
-                            #(#field_idents: ::duckdb_neo::__derive::child_writer::<#types>(children[#indexes])?,)*
+                            rows: ::haybarn_neo::__derive::vector_writer(vector)?,
+                            #(#field_idents: ::haybarn_neo::__derive::child_writer::<#types>(children[#indexes])?,)*
                         })
                     }
                 }
@@ -344,9 +344,9 @@ fn struct_rows(
                 }
 
                 /// Make a row valid after writing its fields through the public field writers.
-                pub fn set_valid(&mut self, row: ::core::primitive::usize) -> ::duckdb_neo::Result<()> {
+                pub fn set_valid(&mut self, row: ::core::primitive::usize) -> ::haybarn_neo::Result<()> {
                     // SAFETY: every field is always initialized.
-                    unsafe { ::duckdb_neo::__derive::set_row_validity(&mut self.rows, row, true) }
+                    unsafe { ::haybarn_neo::__derive::set_row_validity(&mut self.rows, row, true) }
                 }
             }
 
@@ -364,8 +364,8 @@ fn struct_rows(
                 }
 
                 #[inline]
-                fn set(&mut self, row: ::core::primitive::usize, value: &Self::Value) -> ::duckdb_neo::Result<()> {
-                    let written = (|| -> ::duckdb_neo::Result<()> {
+                fn set(&mut self, row: ::core::primitive::usize, value: &Self::Value) -> ::haybarn_neo::Result<()> {
+                    let written = (|| -> ::haybarn_neo::Result<()> {
                         #(#writes)*
                         ::core::result::Result::Ok(())
                     })();
@@ -377,22 +377,22 @@ fn struct_rows(
                     self.set_valid(row)
                 }
 
-                fn set_null(&mut self, row: ::core::primitive::usize) -> ::duckdb_neo::Result<()> {
+                fn set_null(&mut self, row: ::core::primitive::usize) -> ::haybarn_neo::Result<()> {
                     #(#row_writer::set_null(&mut self.#field_idents, row)?;)*
                     // SAFETY: a NULL row needs no initialized children.
-                    unsafe { ::duckdb_neo::__derive::set_row_validity(&mut self.rows, row, false) }
+                    unsafe { ::haybarn_neo::__derive::set_row_validity(&mut self.rows, row, false) }
                 }
 
-                unsafe fn resize_rows(&mut self, len: ::core::primitive::usize) -> ::duckdb_neo::Result<()> {
+                unsafe fn resize_rows(&mut self, len: ::core::primitive::usize) -> ::haybarn_neo::Result<()> {
                     // SAFETY: the caller upholds the contract for the struct's rows; DuckDB resizes
                     // every field along with them.
-                    unsafe { ::duckdb_neo::__derive::resize_rows(&mut self.rows, len)? };
+                    unsafe { ::haybarn_neo::__derive::resize_rows(&mut self.rows, len)? };
                     #(#row_writer::refresh(&mut self.#field_idents)?;)*
                     ::core::result::Result::Ok(())
                 }
 
-                fn refresh(&mut self) -> ::duckdb_neo::Result<()> {
-                    ::duckdb_neo::__derive::refresh(&mut self.rows)?;
+                fn refresh(&mut self) -> ::haybarn_neo::Result<()> {
+                    ::haybarn_neo::__derive::refresh(&mut self.rows)?;
                     #(#row_writer::refresh(&mut self.#field_idents)?;)*
                     ::core::result::Result::Ok(())
                 }
@@ -403,8 +403,8 @@ fn struct_rows(
                 type Writer<#lifetime> = #writer_ident #writer_generics where Self: #lifetime;
 
                 unsafe fn row_writer<#lifetime>(
-                    vector: ::core::ptr::NonNull<::duckdb_neo::vector::Vector<#lifetime, Self>>,
-                ) -> ::duckdb_neo::Result<Self::Writer<#lifetime>> {
+                    vector: ::core::ptr::NonNull<::haybarn_neo::vector::Vector<#lifetime, Self>>,
+                ) -> ::haybarn_neo::Result<Self::Writer<#lifetime>> {
                     // SAFETY: the caller upholds the borrow contract.
                     unsafe { #writer_ident::from_raw(vector) }
                 }

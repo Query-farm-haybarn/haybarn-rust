@@ -8,13 +8,13 @@
 //! A [`FunctionDocumentationBuilder`] optionally describes the overload.
 //!
 //! ```
-//! use duckdb_neo::{
+//! use haybarn_neo::{
 //!     DuckDBType,
 //!     environment::{Environment, StorageLocation},
 //!     signature::{FunctionDocumentationBuilder, FunctionParameter, SignatureBuilder},
 //! };
 //!
-//! # fn main() -> duckdb_neo::Result<()> {
+//! # fn main() -> haybarn_neo::Result<()> {
 //! let env = Environment::new()?;
 //! let conn = env.open(StorageLocation::InMemory)?.connect()?;
 //!

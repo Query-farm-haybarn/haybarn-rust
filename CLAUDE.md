@@ -68,7 +68,7 @@ version, but `.duckdb-release` holds a Haybarn tag), so by hand:
 
 ```shell
 git -C crates/libduckdb-sys/duckdb-sources fetch origin tag haybarn-v<version>
-git -C crates/libduckdb-sys/duckdb-sources checkout haybarn-v<version>   # e.g. haybarn-v2.0.1-rc2
+git -C crates/libduckdb-sys/duckdb-sources checkout haybarn-v<version>   # e.g. haybarn-v2.0.1-rc3
 python3 -c 'import sys, pathlib; sys.path.insert(0, "scripts"); import upgrade; \
   upgrade.package_sources(pathlib.Path(".").resolve(), "v2.0.1")'          # rewrites duckdb.tar.gz
 ```

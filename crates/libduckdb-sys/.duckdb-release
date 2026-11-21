@@ -25,6 +25,6 @@
 # only accepts DuckDB version labels, not Haybarn tags); regenerate the bundled
 # files as described in CLAUDE.md.
 
-DUCKDB_RELEASE_COMMIT=d3071cd2d523ba6e4dc9f77df06f80110111978c
-DUCKDB_RELEASE_URL=https://github.com/Query-farm-haybarn/haybarn/releases/download/haybarn-v2.0.1-rc2
-DUCKDB_RELEASE_VERSION=haybarn-v2.0.1-rc2
+DUCKDB_RELEASE_COMMIT=b2aa6ca65bd8d146cd0aa80f1c4f35da8e2f9430
+DUCKDB_RELEASE_URL=https://github.com/Query-farm-haybarn/haybarn/releases/download/haybarn-v2.0.1-rc3
+DUCKDB_RELEASE_VERSION=haybarn-v2.0.1-rc3
